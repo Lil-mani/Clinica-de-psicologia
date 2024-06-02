@@ -35,4 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+use App\Http\Controllers\ContactController;
+// rota para guardar info de contato
+Route::post('/contacts', [ContactController::class, 'store']);
+
 require __DIR__.'/auth.php';

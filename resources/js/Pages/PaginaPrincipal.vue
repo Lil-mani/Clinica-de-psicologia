@@ -49,14 +49,14 @@
         </div>
         <form @submit.prevent="submitForm" class="contact-form">
           <div class="form-row">
-            <input type="text" v-model="formData.nome" placeholder="Nome" id="nome" />
-            <input type="text" v-model="formData.sobrenome" placeholder="Sobrenome" id="sobrenome" />
+            <input type="text" v-model="formData.nome" placeholder="Nome" id="name" />
+            <input type="text" v-model="formData.sobrenome" placeholder="Sobrenome" id="surname" />
           </div>
           <div class="form-row">
             <input type="email" v-model="formData.email" placeholder="Email" id="email" />
           </div>
           <div class="form-row">
-            <textarea v-model="formData.mensagem" placeholder="Mensagem" id="mensagem"></textarea>
+            <textarea v-model="formData.mensagem" placeholder="Mensagem" id="message"></textarea>
           </div>
           <button type="submit">Enviar</button>
         </form>
@@ -73,10 +73,10 @@ export default {
     return {
       currentSection: 'sobre-nos', // Seção padrão
       formData: {
-        nome: '',
-        sobrenome: '',
+        name: '',
+        surname: '',
         email: '',
-        mensagem: ''
+        message: ''
       }
     }
   },
@@ -94,14 +94,14 @@ export default {
   methods: {
     submitForm() {
       const formPayload = {
-        nome: this.formData.nome,
-        sobrenome: this.formData.sobrenome,
+        name: this.formData.name,
+        surname: this.formData.surname,
         email: this.formData.email,
-        mensagem: this.formData.mensagem
+        menssage: this.formData.message
       };
 
       // Enviar a solicitação para o back-end
-      fetch('/api/contato', {
+      fetch('/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -113,10 +113,10 @@ export default {
       .then(data => {
         console.log('Success:', data);
         // Limpar o formulário após o envio
-        this.formData.nome = '';
-        this.formData.sobrenome = '';
+        this.formData.name = '';
+        this.formData.surname = '';
         this.formData.email = '';
-        this.formData.mensagem = '';
+        this.formData.message = '';
       })
       .catch((error) => {
         console.error('Error:', error);

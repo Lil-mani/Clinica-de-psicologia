@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
@@ -9,6 +10,7 @@ export default defineConfig({
             ssr: 'resources/js/ssr.js',
             refresh: true,
         }),
+<<<<<<< Updated upstream
         vue({
             template: {
                 transformAssetUrls: {
@@ -17,5 +19,8 @@ export default defineConfig({
                 },
             },
         }),
+=======
+        vue()
+>>>>>>> Stashed changes
     ],
 });
