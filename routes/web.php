@@ -52,7 +52,7 @@ Route::get('/dashboard', function () {
         return Inertia::render('PaginaPsicologo');
     }   
     elseif ($role === 'secretaria') {
-        return Inertia::render('PaginaSecretaria');
+        return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
     }
     elseif ($role === 'user' || $role === 'admin') {
         return Inertia::render('PaginaUsuario', ['user' => $user->name,'names' => $names]);

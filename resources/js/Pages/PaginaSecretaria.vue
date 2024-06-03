@@ -6,11 +6,11 @@
         </div>
         <div class="user-info">
           <font-awesome-icon class="user-icon" icon="user-circle" />
-          <p>Bem-vindo, {{ professionalName }}</p>
+          <p>Bem-vindo, {{ user }}</p>
         </div>
         <nav class="nav-menu">
           <ul>
-            <li @click="selectSection('Documentos')" :class="{ active: selectedSection === 'Documentos' }">Contatos</li>
+            <li @click="selectSection('Novos Contatos')" :class="{ active: selectedSection === 'Novos Contatos' }">Novos Contatos</li>
             <li @click="logout">Sair</li>
           </ul>
         </nav>
@@ -21,11 +21,18 @@
           <font-awesome-icon :icon="[isSidebarHidden ? 'arrow-right' : 'arrow-left']" />
         </button>
 
-        <div v-if="selectedSection === 'Contatos'">
-            <h2 class="section-title">Contatos</h2>
-            <p>Aqui você pode visualizar e gerenciar os contatos.</p>
-            <DocumentEditor />
-          </div>
+        <div v-if="selectedSection === 'Novos Contatos'">
+            <h2 class="section-title">Novos Contatos</h2>
+            <ul>
+                <li v-for="contact in contacts" :key="contact.id">
+                <div>
+                    <p><strong>Nome:</strong> {{ contact.name }} {{ contact.surname }}</p>
+                    <p><strong>Email:</strong> {{ contact.email }}</p>
+                    <p><strong>Mensagem:</strong> {{ contact.message }}</p>
+      </div>
+    </li>
+  </ul>
+</div>
         </div>
       </div>
   </template>
@@ -41,6 +48,9 @@
   library.add(faUserCircle, faArrowLeft, faArrowRight);
 
   export default {
+    props: {
+        user: String
+    },
     methods:{
         logout() {
             this.$inertia.post('/logout');
@@ -53,41 +63,36 @@
     setup() {
       const professionalName = ref('Dr. João Silva');
       const isSidebarHidden = ref(false);
-      const selectedSection = ref('Contatos');
-
+      const selectedSection = ref('Novos Contatos');
+      const contacts = ref([]);
       
       const toggleSidebar = () => {
         isSidebarHidden.value = !isSidebarHidden.value;
       };
 
-      const showPatientRecord = (patient) => {
-        selectedPatient.value = { ...patient };
-      };
 
       const selectSection = (section) => {
         selectedSection.value = section;
-        selectedPatient.value = null; // Clear selected patient when switching sections
+        fetchContacts();
       };
 
-      const saveSession = () => {
-        console.log('Session data saved:', sessionData.value);
-        // Save sessionData to a database or store it as needed
-      };
-
+      const fetchContacts = async () => {
+        try {
+            console.log("tentando")
+            const response = await axios.get('/api/contacts');
+            contacts.value = response.data;
+        } catch (error) {
+            console.error('Failed to fetch contacts:', error);
+        }
+    };
       return {
         professionalName,
         isSidebarHidden,
+        fetchContacts,
         toggleSidebar,
-        patients,
-        selectedPatient,
-        showPatientRecord,
         selectedSection,
         selectSection,
-        sessionData,
-        sessionFields,
-        saveSession,
-        complaintHistoryFields,
-        childhoodFields
+        contacts
       };
     }
   }
