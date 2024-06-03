@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Userdata;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,9 +26,29 @@ Route::get('/', function () {
     ]);
 });
 
+
+
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = auth()->user();
+    $role = DB::table('userdatas')->where('email', $user->email)->value('role');
+    //Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
+    if ($role === 'psicologo') {
+        return Inertia::render('PaginaPsicologo');
+    }   
+    elseif ($role === 'secretaria') {
+        return Inertia::render('PaginaSecretaria');
+    }
+    elseif ($role === 'user' || $role === 'admin') {
+        return Inertia::render('Dashboard');
+    }
+    else {
+        abort(403,'Não autorizado');
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/doctor', function () {
+    return Inertia::render('PaginaPsicologo');
+})->middleware(['auth',''])->name('doctor');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -35,8 +56,5 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-use App\Http\Controllers\ContactController;
-// rota para guardar info de contato
-Route::post('/contacts', [ContactController::class, 'store']);
 
 require __DIR__.'/auth.php';

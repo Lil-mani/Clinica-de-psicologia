@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Isso é referente ao formulario do usuario
+// rota para guardar info de contato
+Route::post('/contacts', [ContactController::class, 'store']);
+Route::get('/contacts', [ContactController::class, 'index']);
+
+
+// // Isso é referente ao formulario do usuario
 // Route::post('/contato', function (Request $request) {
 //     // Valide e processe os dados do formulário de contato aqui
 //     // Por exemplo:

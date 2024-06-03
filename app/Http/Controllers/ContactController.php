@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use Illuminate\Http\Request;
-
+use Inertia\Inertia;
 class ContactController extends Controller
 {
     public function store(Request $request)
@@ -26,6 +26,12 @@ class ContactController extends Controller
         $contacts = Contact::all();
         return response()->json($contacts);
     }
+
+    // public function index()
+    // {
+    //     $contacts = Contact::all();
+    //     return Inertia::render('PaginaPrincipal', ['contacts' => $contacts]);
+    // }
 
     // Método para exibir um contato específico
     public function show($id)
