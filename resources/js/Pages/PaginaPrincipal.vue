@@ -49,14 +49,14 @@
         </div>
         <form @submit.prevent="submitForm" class="contact-form">
           <div class="form-row">
-            <input type="text" v-model="formData.nome" placeholder="Nome" id="name" />
-            <input type="text" v-model="formData.sobrenome" placeholder="Sobrenome" id="surname" />
+            <input type="text" v-model="formData.name" placeholder="Nome" id="name" />
+            <input type="text" v-model="formData.surname" placeholder="Sobrenome" id="surname" />
           </div>
           <div class="form-row">
             <input type="email" v-model="formData.email" placeholder="Email" id="email" />
           </div>
           <div class="form-row">
-            <textarea v-model="formData.mensagem" placeholder="Mensagem" id="message"></textarea>
+            <textarea v-model="formData.message" placeholder="Mensagem" id="message"></textarea>
           </div>
           <button type="submit">Enviar</button>
         </form>
@@ -67,7 +67,7 @@
 
 <script>
 import { ref } from 'vue';
-
+import axios from 'axios';
 export default {
   data() {
     return {
@@ -93,35 +93,18 @@ export default {
   },
   methods: {
     submitForm() {
-      const formPayload = {
-        name: this.formData.name,
-        surname: this.formData.surname,
-        email: this.formData.email,
-        menssage: this.formData.message
-      };
+      axios.post('/api/contacts', this.formData)
+        .then(response => {
+          alert('Mensagem enviada com sucesso!');
+          // Limpar o formulário após o envio
+          this.formData = { name: '', surname: '', email: '', message: '' };
+        })
+        .catch(error => {
+          console.error('Erro ao enviar mensagem:', error);
+          alert('Erro ao enviar a mensagem, tente novamente.');
+        });
 
-      // Enviar a solicitação para o back-end
-      fetch('/contacts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify(formPayload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        // Limpar o formulário após o envio
-        this.formData.name = '';
-        this.formData.surname = '';
-        this.formData.email = '';
-        this.formData.message = '';
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-    }
+    },
   }
 }
 </script>

@@ -1,10 +1,23 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContactController;
 use App\Models\Userdata;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Route::get('get-message', function (){
+//     return response()->json([
+//         'message' => 'Hello there, it\'s your first response.'
+//     ], 200);
+// });
+
+// Route::post('post-data', function (\Illuminate\Http\Request $request){
+//     return response()->json([
+//         'message' => 'Your requested data is : ' . $request->full_name
+//     ]);
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +44,10 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $user = auth()->user();
     $role = DB::table('userdatas')->where('email', $user->email)->value('role');
-    //Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
+    $dados = DB::table('userdatas')->where('email', $user->email);
+    $names = DB::table('userdatas')->where('role','psicologo')->pluck('name','id');
+    Log::info($names);
+    Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
     if ($role === 'psicologo') {
         return Inertia::render('PaginaPsicologo');
     }   
@@ -39,7 +55,7 @@ Route::get('/dashboard', function () {
         return Inertia::render('PaginaSecretaria');
     }
     elseif ($role === 'user' || $role === 'admin') {
-        return Inertia::render('Dashboard');
+        return Inertia::render('PaginaUsuario', ['user' => $user->name,'names' => $names]);
     }
     else {
         abort(403,'Não autorizado');
@@ -57,4 +73,6 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::post('/contacts', [ContactController::class, 'store']);
+Route::get('/contacts', [ContactController::class, 'index']);
 require __DIR__.'/auth.php';

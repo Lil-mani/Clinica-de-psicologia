@@ -6,12 +6,13 @@
         </div>
         <div class="user-info">
           <font-awesome-icon class="user-icon" icon="user-circle" />
-          <p>Bem-vindo, {{ userName }}</p>
+          <p>Bem-vindo, {{ user }}</p>
         </div>
         <ul>
           <li><a @click.prevent="currentSection = 'historico'" href="#">Histórico de Consultas</a></li>
           <li><a @click.prevent="currentSection = 'novo-agendamento'" href="#">Novo Agendamento</a></li>
           <li><a @click.prevent="currentSection = 'consultas'" href="#">Consultas</a></li>
+          <li><a @click.prevent="logout" href="#">Sair</a></li>
         </ul>
       </div>
   
@@ -49,10 +50,8 @@
           <input type="text" v-model="searchQuery" placeholder="Pesquisar profissional" class="search-bar" />
           <ul class="professionals-list">
             <li v-for="professional in paginatedProfessionals" :key="professional.id" class="professional-item">
-              <div class="circle">{{ professional.initial }}</div>
               <div class="info">
                 <p class="name">{{ professional.name }}</p>
-                <p class="profession">{{ professional.profession }}</p>
               </div>
               <!-- Adicionando manipulador de eventos ao clicar em um profissional -->
               <button @click="showPopup(professional)" class="agendamento-button">Agendamento</button>
@@ -74,22 +73,20 @@
       <div v-if="popupVisible" class="popup">
         <div class="popup-header">
           <div class="popup-header-left">
-            <div class="popup-icon">{{ selectedProfessional.initial }}</div>
             <div class="popup-header-text">
               <h3>{{ selectedProfessional.name }}</h3>
-              <p>{{ selectedProfessional.profession }}</p>
             </div>
           </div>
           <button @click="hidePopup" class="close-button">Fechar</button>
         </div>
         <div class="popup-content">
           <h2>Data de Agendamento</h2>
-          <input type="date" class="date-picker" />
+          <input type="date" class="date-picker" v-model="appointment.date"/>
           <h3>Horário da Consulta</h3>
           <div class="horarios">
-            <button class="horario-button" v-for="horario in horarios" :key="horario">{{ horario }}</button>
+            <button class="horario-button" v-for="horario in horarios" :key="horario" @click="selectTime(horario)">{{ horario }}</button>
           </div>
-          <button class="confirmar-button">Confirmar</button>
+          <button class="confirmar-button" @click="confirmAppointment">Confirmar</button>
         </div>
       </div>
     </div>
@@ -100,38 +97,57 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   import { library } from '@fortawesome/fontawesome-svg-core';
   import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
+  import axios from 'axios';
   
   library.add(faUserCircle);
   
   export default {
+    props: {user: String
+      // names: {
+      //   id
+      // }
+    },
+    mounted() {
+      // console.log('User authenticated:',this.user);
+    },
     components: {
       FontAwesomeIcon
     },
+    methods: {
+      logout() {
+        this.$inertia.post('/logout');
+      },
+      fetchProfessionals() {
+      axios.get('/api/nomes_psicologos')
+        .then(response => {
+          this.professionals = response.data.map((name, index) => ({
+            id: index + 1, // Assuming a simple array of names
+            name
+          }));
+        })
+        .catch(error => {
+          console.error('Erro ao carregar profissionais:', error);
+        });
+    }
+    },
+    mounted() {
+      this.fetchProfessionals()
+    },  
     setup() {
       const currentSection = ref('historico');
-      const userName = 'Nome do Usuário';
-  
+      const horarios = ref(['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']);
       const searchQuery = ref('');
       const currentPage = ref(1);
       const historicoPage = ref(1);
       const itemsPerPage = 5;
       const historicoItemsPerPage = 5;
+      const appointment = ref({
+        date: '',
+        time: '',
+        doctorId : 1
+      });
   
-      const professionals = ref([
-        { id: 1, name: 'Ana Silva', profession: 'Psicóloga', initial: 'A' },
-        { id: 2, name: 'Bruno Costa', profession: 'Psicanalista', initial: 'B' },
-        { id: 3, name: 'Carla Mendes', profession: 'Terapeuta', initial: 'C' },
-        { id: 4, name: 'Daniela Rocha', profession: 'Psicopedagoga', initial: 'D' },
-        { id: 5, name: 'Eduardo Santos', profession: 'Neuropsicólogo', initial: 'E' },
-        { id: 6, name: 'Fernanda Lima', profession: 'Psicóloga', initial: 'F' },
-        { id: 7, name: 'Gustavo Teixeira', profession: 'Psicanalista', initial: 'G' },
-        { id: 8, name: 'Helena Alves', profession: 'Terapeuta', initial: 'H' },
-        { id: 9, name: 'Igor Nunes', profession: 'Psicopedagogo', initial: 'I' },
-        { id: 10, name: 'Julia Ribeiro', profession: 'Neuropsicóloga', initial: 'J' },
-        { id: 11, name: 'Kleber Martins', profession: 'Psicólogo', initial: 'K' },
-        { id: 12, name: 'Lara Freitas', profession: 'Psicanalista', initial: 'L' },
-        { id: 13, name: 'Marcos Pinto', profession: 'Terapeuta', initial: 'M' },
-      ]);
+      const professionals = ref([]);
   
       const historico = ref([
         { id: 1, professional: 'Ana Silva', date: '2023-01-15', time: '08:00', notes: 'Anotações da sessão 1' },
@@ -149,8 +165,7 @@
           return professionals.value;
         }
         return professionals.value.filter(professional =>
-          professional.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          professional.profession.toLowerCase().includes(searchQuery.value.toLowerCase())
+          professional.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       });
   
@@ -214,11 +229,9 @@
         alert(notes);
       };
   
-      const horarios = ['08:00', '09:30', '11:00'];
   
       return {
         currentSection,
-        userName,
         searchQuery,
         currentPage,
         historicoPage,

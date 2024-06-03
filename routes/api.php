@@ -2,6 +2,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +23,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // rota para guardar info de contato
 Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/contacts', [ContactController::class, 'index']);
+
+Route::get('/psychologists', [RegisteredUserController::class, 'getPsychologists'])->name('nomes_psicologos');
+Route::post('/appointments', [AppointmentController::class, 'store']);
 
 
 // // Isso é referente ao formulario do usuario

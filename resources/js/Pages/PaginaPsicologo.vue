@@ -12,6 +12,7 @@
           <ul>
             <li @click="selectSection('Pacientes')" :class="{ active: selectedSection === 'Pacientes' }">Pacientes</li>
             <li @click="selectSection('Documentos')" :class="{ active: selectedSection === 'Documentos' }">Documentos</li>
+            <li @click="logout">Sair</li>
           </ul>
         </nav>
       </div>
@@ -200,6 +201,11 @@
   library.add(faUserCircle, faArrowLeft, faArrowRight);
 
   export default {
+    methods:{
+        logout() {
+            this.$inertia.post('/logout');
+        }
+    },
     components: {
       FontAwesomeIcon,
       DocumentEditor

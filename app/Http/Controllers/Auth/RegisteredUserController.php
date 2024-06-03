@@ -76,4 +76,9 @@ class RegisteredUserController extends Controller
 
         return redirect(RouteServiceProvider::HOME);
     }
+    public function getPsicologos()
+    {
+        $names = Userdata::where('role','psicologo')->pluck('id','name');
+        return response()->json($names);
+    }
 }
