@@ -23,16 +23,44 @@
 
         <div v-if="selectedSection === 'Novos Contatos'">
             <h2 class="section-title">Novos Contatos</h2>
-            <ul>
-                <li v-for="contact in contacts" :key="contact.id">
-                <div>
-                    <p><strong>Nome:</strong> {{ contact.name }} {{ contact.surname }}</p>
-                    <p><strong>Email:</strong> {{ contact.email }}</p>
-                    <p><strong>Mensagem:</strong> {{ contact.message }}</p>
-      </div>
-    </li>
-  </ul>
-</div>
+                <ul>
+                    <li v-for="contact in contacts" :key="contact.id">
+                        <div>
+                            <p><strong>Nome:</strong> {{ contact.name }} {{ contact.surname }}</p>
+                            <p><strong>Email:</strong> {{ contact.email }}</p>
+                            <p><strong>Mensagem:</strong> {{ contact.message }}</p>
+                            <button @click="showModal(contact)">Registrar como Usuário</button>
+                        </div>
+                    </li>
+                </ul>
+        </div>
+        <!-- Modal -->
+    <div v-if="modalVisible" class="modal">
+      <form @submit.prevent="submit">
+        <div class="form-row">
+      <input type="text" v-model="form.name" placeholder="Nome" />
+      <input type="text" v-model="form.surname" placeholder="Sobrenome" />
+    </div>
+    <input type="email" v-model="form.email" placeholder="Email" />
+    <input type="password" v-model="form.password" placeholder="Senha" />
+    <input type="password" v-model="form.password_confirmation" placeholder="Confirmar Senha" />
+    <input type="text" v-model="form.cpf" placeholder="CPF" />
+    <input type="text" v-model="form.telefone" placeholder="Telefone" />
+    <input type="date" v-model="form.dob" placeholder="Data de Nascimento" />
+    <input type="text" v-model="form.cep" placeholder="CEP" @blur="fetchAddress" />
+    <input type="text" v-model="form.logradouro" placeholder="Logradouro" />
+    <input type="text" v-model="form.complemento" placeholder="Complemento" />
+    <input type="text" v-model="form.bairro" placeholder="Bairro" />
+    <input type="text" v-model="form.localidade" placeholder="Localidade" />
+    <input type="text" v-model="form.uf" placeholder="UF" />
+        <div class="flex items-center justify-end mt-4">
+          <button type="button" @click="modalVisible = false">Close</button>
+          <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            Register
+          </PrimaryButton>
+        </div>
+      </form>
+    </div>
         </div>
       </div>
   </template>
@@ -41,6 +69,7 @@
   import { ref } from 'vue';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   import { library } from '@fortawesome/fontawesome-svg-core';
+  import { Head, Link, useForm } from '@inertiajs/vue3';
   import { faUserCircle, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
   import DocumentEditor from '../Components/DocumentEditor.vue';
 
@@ -52,20 +81,45 @@
         user: String
     },
     methods:{
+        submit() {
+            form.post(route('register'), {
+                onFinish: () => form.reset('name','email','password','password_confirmation','cpf','telefone','dob','cep','logradouro','complemento','bairro','localidade','uf')
+            });
+        },
         logout() {
             this.$inertia.post('/logout');
-        }
+        },
+        showModal(contact) {
+            this.form.email = contact.email; // Pré-popular o campo de e-mail, se desejado
+            this.modalVisible = true;
+        },
     },
     components: {
       FontAwesomeIcon,
       DocumentEditor
     },
     setup() {
-      const professionalName = ref('Dr. João Silva');
       const isSidebarHidden = ref(false);
       const selectedSection = ref('Novos Contatos');
       const contacts = ref([]);
-      
+      const modalVisible = ref(false);
+      const form = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        cpf: '',
+        telefone: '',
+        dob: '',
+        cep: '',
+        logradouro: '',
+        complemento: '',
+        bairro: '',
+        localidade: '',
+        uf: '',
+        role: 'usuario'
+        });
+
       const toggleSidebar = () => {
         isSidebarHidden.value = !isSidebarHidden.value;
       };
@@ -76,23 +130,47 @@
         fetchContacts();
       };
 
+      const fetchAddress = async () => {
+        if (form.cep.length === 8) {
+            try {
+                const response = await axios.get(`https://viacep.com.br/ws/${form.cep}/json/`);
+                if (!response.data.erro) {
+                    form.logradouro = response.data.logradouro;
+                    form.complemento = response.data.complemento;
+                    form.bairro = response.data.bairro;
+                    form.localidade = response.data.localidade;
+                    form.uf = response.data.uf;
+                } else {
+                    alert('CEP não encontrado.');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar o CEP:', error);
+                alert('Erro ao buscar o CEP.');
+            }
+        }
+    };
+
+      // funcao que pega os novos contatos, retorna um json
       const fetchContacts = async () => {
         try {
-            console.log("tentando")
+            //console.log("tentando")
             const response = await axios.get('/api/contacts');
             contacts.value = response.data;
         } catch (error) {
             console.error('Failed to fetch contacts:', error);
         }
     };
+    
       return {
-        professionalName,
+        modalVisible,
         isSidebarHidden,
+        fetchAddress,
         fetchContacts,
         toggleSidebar,
         selectedSection,
         selectSection,
-        contacts
+        contacts,
+        form
       };
     }
   }
@@ -299,4 +377,18 @@
   .download-button:hover {
     background-color: #333640;
   }
+  .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  z-index: 1000;
+  width: 90%;  /* Ajuste a largura conforme necessário */
+  max-width: 600px;  /* Garante que o modal não fique muito largo em telas grandes */
+  overflow: auto;  /* Garante que todo o conteúdo seja rolável se exceder a altura da viewport */
+  border-radius: 8px;  /* Cantos arredondados para um visual mais suave */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);  /* Sombra sutil para profundidade */
+}
   </style>
