@@ -117,17 +117,16 @@
       logout() {
         this.$inertia.post('/logout');
       },
-      fetchProfessionals() {
-      axios.get('/api/nomes_psicologos')
-        .then(response => {
-          this.professionals = response.data.map((name, index) => ({
-            id: index + 1, // Assuming a simple array of names
-            name
-          }));
-        })
-        .catch(error => {
-          console.error('Erro ao carregar profissionais:', error);
-        });
+      async fetchProfessionals() {
+        try
+        {
+          const response = await axios.get('/api/psychologists');
+          this.professionals = response.data;
+          console.log(response.data); 
+      } catch (error) {
+        console.error(error);
+      }
+      
     }
     },
     mounted() {
@@ -180,6 +179,7 @@
       const paginatedProfessionals = computed(() => {
         const start = (currentPage.value - 1) * itemsPerPage;
         const end = start + itemsPerPage;
+        console.log(filteredProfessionals.value);
         return filteredProfessionals.value.slice(start, end);
       });
   

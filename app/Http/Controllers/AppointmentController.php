@@ -28,9 +28,8 @@ class AppointmentController extends Controller
     }
 
     public function show()
-    {
-        $medic = Userdata::find(auth()->user()->id);    
-        $appointments = Appointment::get()->where('medic',$medic->id);
+    {    
+        $appointments = Appointment::get();
         return response()->json($appointments);
     }
 

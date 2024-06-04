@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\PatientRecordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,23 +25,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/contacts', [ContactController::class, 'index']);
 Route::get('/appointments', [AppointmentController::class, 'show']);
+Route::get('/usuario', [RegisteredUserController::class,'show']);
+Route::post('/records',[PatientRecordController::class,'store']);
 
-Route::get('/psychologists', [RegisteredUserController::class, 'getPsychologists'])->name('nomes_psicologos');
 
 
-// // Isso é referente ao formulario do usuario
-// Route::post('/contato', function (Request $request) {
-//     // Valide e processe os dados do formulário de contato aqui
-//     // Por exemplo:
-//     $validatedData = $request->validate([
-//         'nome' => 'required|string|max:255',
-//         'sobrenome' => 'required|string|max:255',
-//         'email' => 'required|email|max:255',
-//         'mensagem' => 'required|string',
-//     ]);
+Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
 
-//     // Salve os dados do formulário, envie um e-mail, ou faça o que for necessário
 
-//     // Retorne uma resposta de sucesso
-//     return response()->json(['message' => 'Formulário de contato recebido com sucesso!']);
-// });
