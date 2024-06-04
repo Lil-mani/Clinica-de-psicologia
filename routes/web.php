@@ -1,9 +1,24 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AppointmentController;
+use App\Models\Userdata;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Route::get('get-message', function (){
+//     return response()->json([
+//         'message' => 'Hello there, it\'s your first response.'
+//     ], 200);
+// });
+
+// Route::post('post-data', function (\Illuminate\Http\Request $request){
+//     return response()->json([
+//         'message' => 'Your requested data is : ' . $request->full_name
+//     ]);
+// });
 
 /*
 |--------------------------------------------------------------------------
@@ -25,14 +40,43 @@ Route::get('/', function () {
     ]);
 });
 
+
+
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = auth()->user();
+    $role = DB::table('userdatas')->where('email', $user->email)->value('role');
+    $dados = DB::table('userdatas')->where('email', $user->email);
+    $names = DB::table('userdatas')->where('role','psicologo')->pluck('name','id');
+    Log::info($names);
+    Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
+    if ($role === 'psicologo') {
+        return Inertia::render('PaginaPsicologo', ['user' => $user->name,'userid' => $user->id]);
+    }   
+    elseif ($role === 'secretaria') {
+        return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
+    }
+    elseif ($role === 'user' || $role === 'admin') {
+        return Inertia::render('PaginaUsuario', ['user' => $user->name,'names' => $names]);
+    }
+    else {
+        abort(403,'Não autorizado');
+    }
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/doctor', function () {
+    return Inertia::render('PaginaPsicologo');
+})->middleware(['auth',''])->name('doctor');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/appointments/{medic}', [AppointmentController::class, 'show']);
+// });
+Route::get('/appointments', [AppointmentController::class, 'show']);
+Route::post('/contacts', [ContactController::class, 'store']);
+Route::get('/contacts', [ContactController::class, 'index']);
+Route::delete('/contact/{id}', 'ContactController@destroy');
 require __DIR__.'/auth.php';
