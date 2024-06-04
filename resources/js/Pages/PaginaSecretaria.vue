@@ -38,26 +38,27 @@
     <div v-if="modalVisible" class="modal">
       <form @submit.prevent="submit">
         <div class="form-row">
-      <input type="text" v-model="form.name" placeholder="Nome" />
-      <input type="text" v-model="form.surname" placeholder="Sobrenome" />
-    </div>
-    <input type="email" v-model="form.email" placeholder="Email" />
-    <input type="password" v-model="form.password" placeholder="Senha" />
-    <input type="password" v-model="form.password_confirmation" placeholder="Confirmar Senha" />
-    <input type="text" v-model="form.cpf" placeholder="CPF" />
-    <input type="text" v-model="form.telefone" placeholder="Telefone" />
-    <input type="date" v-model="form.dob" placeholder="Data de Nascimento" />
-    <input type="text" v-model="form.cep" placeholder="CEP" @blur="fetchAddress" />
-    <input type="text" v-model="form.logradouro" placeholder="Logradouro" />
-    <input type="text" v-model="form.complemento" placeholder="Complemento" />
-    <input type="text" v-model="form.bairro" placeholder="Bairro" />
-    <input type="text" v-model="form.localidade" placeholder="Localidade" />
-    <input type="text" v-model="form.uf" placeholder="UF" />
+            <input type="text" v-model="form.name" placeholder="Nome" />
+            <input type="text" v-model="form.surname" placeholder="Sobrenome" />
+            </div>
+            <input type="email" v-model="form.email" placeholder="Email" />
+            <input type="password" v-model="form.password" placeholder="Senha" />
+            <input type="password" v-model="form.password_confirmation" placeholder="Confirmar Senha" />
+            <input type="text" v-model="form.cpf" placeholder="CPF" />
+            <input type="text" v-model="form.telefone" placeholder="Telefone" />
+            <input type="date" v-model="form.dob" placeholder="Data de Nascimento" />
+            <input type="text" v-model="form.cep" placeholder="CEP" @blur="fetchAddress" />
+            <input type="text" v-model="form.logradouro" placeholder="Logradouro" />
+            <input type="text" v-model="form.complemento" placeholder="Complemento" />
+            <input type="text" v-model="form.bairro" placeholder="Bairro" />
+            <input type="text" v-model="form.localidade" placeholder="Localidade" />
+            <input type="text" v-model="form.uf" placeholder="UF" />
         <div class="flex items-center justify-end mt-4">
           <button type="button" @click="modalVisible = false">Close</button>
-          <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+          <!-- <button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             Register
-          </PrimaryButton>
+          </button> -->
+          <button type="submit">Register</button>   
         </div>
       </form>
     </div>
@@ -80,17 +81,35 @@
     props: {
         user: String
     },
+    // data() {
+    //   return {
+    //     form: {
+    //       name: '',
+    //       email: '',
+    //       password: '',
+    //       password_confirmation: '',
+    //       cpf: '',
+    //       telefone: '',
+    //       dob: '',
+    //       cep: '',
+    //       logradouro: '',
+    //       complemento: '',
+    //       bairro: '',
+    //       localidade: '',
+    //       uf: '',
+    //       role: 'usuario'
+    //     }
+    //   }
+    // },
     methods:{
-        submit() {
-            form.post(route('register'), {
-                onFinish: () => form.reset('name','email','password','password_confirmation','cpf','telefone','dob','cep','logradouro','complemento','bairro','localidade','uf')
-            });
-        },
         logout() {
             this.$inertia.post('/logout');
         },
         showModal(contact) {
             this.form.email = contact.email; // Pré-popular o campo de e-mail, se desejado
+            this.form.name = contact.name;
+            this.form.surname = contact.surname;
+            this.contact = contact.id;
             this.modalVisible = true;
         },
     },
@@ -102,6 +121,7 @@
       const isSidebarHidden = ref(false);
       const selectedSection = ref('Novos Contatos');
       const contacts = ref([]);
+      const contact = ref(0);
       const modalVisible = ref(false);
       const form = useForm({
         name: '',
@@ -160,7 +180,11 @@
             console.error('Failed to fetch contacts:', error);
         }
     };
-    
+    const submit = () => {
+            form.post(route('register'), {
+                // onFinish: () => 
+            });
+        };
       return {
         modalVisible,
         isSidebarHidden,
@@ -170,7 +194,9 @@
         selectedSection,
         selectSection,
         contacts,
-        form
+        form,
+        submit,
+        contact
       };
     }
   }

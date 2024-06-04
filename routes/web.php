@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AppointmentController;
 use App\Models\Userdata;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -49,7 +50,7 @@ Route::get('/dashboard', function () {
     Log::info($names);
     Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
     if ($role === 'psicologo') {
-        return Inertia::render('PaginaPsicologo');
+        return Inertia::render('PaginaPsicologo', ['user' => $user->name,'userid' => $user->id]);
     }   
     elseif ($role === 'secretaria') {
         return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
@@ -71,8 +72,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/appointments/{medic}', [AppointmentController::class, 'show']);
+// });
+Route::get('/appointments', [AppointmentController::class, 'show']);
 Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/contacts', [ContactController::class, 'index']);
+Route::delete('/contact/{id}', 'ContactController@destroy');
 require __DIR__.'/auth.php';

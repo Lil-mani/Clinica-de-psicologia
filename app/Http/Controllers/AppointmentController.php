@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use App\Models\Userdata;
 
 class AppointmentController extends Controller
 {
     public function index()
 {
-    $today = now()->startOfDay(); // Captura a meia-noite de hoje
-    $appointments = Appointment::where('time', '>=', $today)
-                               ->where('done', false)
-                               ->get();
+    $appointments = Appointment::get();
     return response()->json($appointments);
 }
 
@@ -31,8 +29,9 @@ class AppointmentController extends Controller
 
     public function show($id)
     {
-        $appointment = Appointment::findOrFail($id);
-        return response()->json($appointment);
+        // $medic = Userdata::find($id);
+        $appointments = Appointment::get();
+        return response()->json($appointments);
     }
 
     public function update($id)

@@ -6,7 +6,7 @@
         </div>
         <div class="user-info">
           <font-awesome-icon class="user-icon" icon="user-circle" />
-          <p>Bem-vindo, {{ professionalName }}</p>
+          <p>Bem-vindo, {{ user }}</p>
         </div>
         <nav class="nav-menu">
           <ul>
@@ -26,7 +26,6 @@
           <h2 class="section-title">Pacientes</h2>
           <ul class="patients-list">
             <li v-for="patient in patients" :key="patient.id" class="patient-item">
-              <div class="circle">{{ patient.initial }}</div>
               <div class="info">
                 <p class="name">{{ patient.name }}</p>
                 <p class="appointment-time">{{ patient.appointmentTime }}</p>
@@ -192,6 +191,7 @@
 
   <script>
   import { ref } from 'vue';
+  import axios from 'axios';
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
   import { library } from '@fortawesome/fontawesome-svg-core';
   import { faUserCircle, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -201,10 +201,40 @@
   library.add(faUserCircle, faArrowLeft, faArrowRight);
 
   export default {
+    props: {
+      user: String,
+      userid: BigInt
+    },
+    data() {
+      return {
+        appointments: []
+      };
+    },
     methods:{
         logout() {
             this.$inertia.post('/logout');
-        }
+        },
+        fetchAppointments() {
+          console.log(`/appointments`);
+          axios.get(`/appointments`)
+            .then(response => {
+              this.appointments = response.data;
+            })
+            .catch(error => {
+              console.error('Erro ao buscar consultas:', error);
+            });
+      },
+      async fetchAppointments() {
+      try {
+        const response = await axios.get('/api/appointments');
+        this.consultations = response.data;
+      } catch (error) {
+        console.error('Erro ao recuperar as consultas:', error);
+      }
+    }
+    },
+    mounted() {
+      this.fetchAppointments();
     },
     components: {
       FontAwesomeIcon,
@@ -266,7 +296,7 @@
       referralsMade: '',
       therapeuticsUsed: ''
     });
-
+      
       const sessionFields = ref([
         { key: 'profession', label: 'Profissão' },
         { key: 'maritalStatus', label: 'Est. Civil' },
