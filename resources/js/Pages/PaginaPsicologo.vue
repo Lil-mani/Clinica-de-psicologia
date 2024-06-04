@@ -26,17 +26,17 @@
           <h2 class="section-title">Pacientes</h2>
           <ul class="patients-list">
             <li v-for="patient in patients" :key="patient.id" class="patient-item">
-              <div class="info">
-                <p class="name">{{ patient.name }}</p>
-                <p class="appointment-time">{{ patient.appointmentTime }}</p>
+              <div v-if=" patient.done === 0 "class="info">
+                <p class="name">{{ patient.patient }}</p>
+                <p class="appointment-time">{{ patient.time }}</p>
               </div>
-              <button @click="showPatientRecord(patient)" class="record-button">Ficha</button>
+              <button @click="showPatientRecord(patient.patient)" class="record-button">Ficha</button>
             </li>
           </ul>
 
           <div v-if="selectedPatient" class="patient-record">
-            <h3>Ficha do Paciente</h3>
-            <div class="form-row">
+            <!---<h3>Ficha do Paciente</h3>
+             <div class="form-row">
               <label>Nome Completo:</label>
               <p>{{ selectedPatient.name }}</p>
               <label>Email:</label>
@@ -69,7 +69,7 @@
             <div class="form-row">
               <label>UF:</label>
               <p>{{ selectedPatient.state }}</p>
-            </div>
+            </div> -->
 
             <h3>Informações de Sessão</h3>
             <div class="session-info">
@@ -175,7 +175,7 @@
                 </div>
               </div>
 
-              <button @click="saveSession" class="save-button">Salvar sessão</button>
+              <button @click="submitRecord" class="save-button">Salvar sessão</button>
             </div>
           </div>
         </div>
@@ -224,15 +224,49 @@
               console.error('Erro ao buscar consultas:', error);
             });
       },
+      async fetchUserData() {
+          try {
+              const response = await axios.get('/api/usuario'); // Ajuste a URL conforme a rota correta
+              console.log(response.data);
+              this.currUserData = response.data.filter(dado => dado.nome == this.selectedPatient);
+              console.log(this.selectedPatient)
+              console.log(this.currUserData)
+          } catch (error) {
+              console.error('Erro ao recuperar os dados:', error);
+          }
+      }
+      ,
+      async submitRecord() {
+        try 
+        {
+        this.sessionData.email = '';
+        this.sessionData.name = this.selectedPatient;
+          const response = await axios.post('/api/records', this.sessionData);
+          console.log(response.value)
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      ,
       async fetchAppointments() {
       try {
         const response = await axios.get('/api/appointments');
         this.consultations = response.data;
+        console.log(this.consultations);
+        this.patients = this.consultations.filter(consultation => {
+          return consultation.medic == this.user;
+        });
+        console.log(this.patients);
       } catch (error) {
         console.error('Erro ao recuperar as consultas:', error);
       }
-    }
     },
+    showPatientRecord (patient) {
+        this.selectedPatient = patient;
+        this.fetchUserData();
+      }
+    },
+    
     mounted() {
       this.fetchAppointments();
     },
@@ -242,6 +276,7 @@
     },
     setup() {
       const professionalName = ref('Dr. João Silva');
+      const currUserData = ref([]);
       const isSidebarHidden = ref(false);
       const selectedSection = ref('Pacientes');
       const sessionData = ref({
@@ -378,10 +413,6 @@
         isSidebarHidden.value = !isSidebarHidden.value;
       };
 
-      const showPatientRecord = (patient) => {
-        selectedPatient.value = { ...patient };
-      };
-
       const selectSection = (section) => {
         selectedSection.value = section;
         selectedPatient.value = null; // Clear selected patient when switching sections
@@ -389,6 +420,7 @@
 
       const saveSession = () => {
         console.log('Session data saved:', sessionData.value);
+
         // Save sessionData to a database or store it as needed
       };
 
@@ -398,7 +430,7 @@
         toggleSidebar,
         patients,
         selectedPatient,
-        showPatientRecord,
+        //showPatientRecord,
         selectedSection,
         selectSection,
         sessionData,

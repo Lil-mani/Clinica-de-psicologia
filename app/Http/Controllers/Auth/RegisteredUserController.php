@@ -125,4 +125,8 @@ class RegisteredUserController extends Controller
         $names = Userdata::where('role','psicologo')->pluck('id','name');
         return response()->json($names);
     }
+    public function show() {
+        $users = Userdata::get();
+        return response()->json($users);    
+    }
 }
