@@ -27,10 +27,10 @@ class AppointmentController extends Controller
         return response()->json(['message' => 'Consulta enviada com sucesso!'], 200);
     }
 
-    public function show($id)
+    public function show()
     {
-        // $medic = Userdata::find($id);
-        $appointments = Appointment::get();
+        $medic = Userdata::find(auth()->user()->id);    
+        $appointments = Appointment::get()->where('medic',$medic->id);
         return response()->json($appointments);
     }
 
