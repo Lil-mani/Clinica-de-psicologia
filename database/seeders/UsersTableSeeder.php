@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
     {
         // Limpar a tabela de usuários
         User::truncate();
-
+        Userdata::truncate();
         // Criar usuários de exemplo
         User::create([
             'name' => 'Secretaria',
@@ -80,7 +80,26 @@ class UsersTableSeeder extends Seeder
             'uf' => 'SP',
             'role' => 'psicologo'
         ]);
-
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@email.com',
+            'password' => Hash::make('admin')
+        ]);
+        Userdata::create([
+            'name' => 'admin',
+            'email' => 'admin@email.com',
+            'password' => 'admin',
+            'cpf' => '21137387910',
+            'telefone' => '19977893133',
+            'dob' => '1972-12-18',
+            'cep' => '13082756',
+            'logradouro' => 'casa do adm',
+            'complemento' => 'tlvz exista',
+            'bairro' => 'bairro a',
+            'localidade' => 'Nlogonia',
+            'uf' => 'SP',
+            'role' => 'admin'
+        ]);
         // // Adicionar mais usuários conforme necessário
         // for ($i = 0; $i < 10; $i++) {
         //     User::create([
