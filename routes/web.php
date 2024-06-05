@@ -55,9 +55,12 @@ Route::get('/dashboard', function () {
     elseif ($role === 'secretaria') {
         return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
     }
-    elseif ($role === 'user' || $role === 'admin') {
+    elseif ($role === 'usuario' || $role === 'admin' || $role === 'user') {
         return Inertia::render('PaginaUsuario', ['user' => $user->name,'names' => $names]);
     }
+    // elseif ($role === 'admin') {
+    //     return Inertia::render('PaginaAdmin', ['user'=> $user->name]);
+    // }
     else {
         abort(403,'Não autorizado');
     }

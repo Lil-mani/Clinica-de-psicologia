@@ -239,7 +239,7 @@ const submit = () => {
                     <option value="admin">Admin</option>
                     <option value="psicologo">Psicologo</option>
                     <option value="secretaria">Secretaria</option>
-                    <option value="user">User</option>
+                    <option value="usuario">Usuario</option>
                 </select>
                 <InputError class="mt-2" :message="form.errors.role" />
             </div>
