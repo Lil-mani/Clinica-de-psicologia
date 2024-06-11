@@ -26,12 +26,14 @@ class RegisteredUserController extends Controller
     }
 
     /**
-     * Handle an incoming registration request.
+     * Registra um usuário e redireciona para a tela de login.
      *
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
+        // checa se todos os dados necessários estao presentes
+        // eu acho que nao precisa de um try catch aqui, mas c'est la vie
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -47,13 +49,16 @@ class RegisteredUserController extends Controller
             'uf' => ['nullable', 'string', 'max:2'],
             'role' => ['required', 'string', 'max:255'],
         ]);
-
+        // registra no banco de dados users, sendo esse o banco de dados usado para dar login
+        // users contem nome, email, e senha criptografada.
+        // userdatas contem muito mais, e a senha NAO criptografada.
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
+        // registra no bando de dados de userdatas (sendo esse a tabela de dados de usuários)
+        // os dados do usuario a ser registrado
         $userdata = Userdata::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -70,14 +75,21 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-
+        // salva o usuário no banco de dados
         $user->save();
-        //Auth::login($user);
+        // se quiser logar com o usuário:
+        // Auth::login($user);
 
+        // redireciona para o home, que seria a tela de login
         return redirect(RouteServiceProvider::HOME);
     }
+    /**
+    * A função abaixo registra um novo usuário no banco de dados sem redirecionar o usuário atual para o home.
+    **/
     public function store_no(Request $request)
     {
+        // checa se todos os dados necessários estao presentes
+        // eu acho que nao precisa de um try catch aqui, mas c'est la vie
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -93,13 +105,16 @@ class RegisteredUserController extends Controller
             'uf' => ['nullable', 'string', 'max:2'],
             'role' => ['required', 'string', 'max:255'],
         ]);
-
+        // registra no banco de dados users, sendo esse o banco de dados usado para dar login
+        // users contem nome, email, e senha criptografada.
+        // userdatas contem muito mais, e a senha NAO criptografada.
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
+        // registra no bando de dados de userdatas (sendo esse a tabela de dados de usuários)
+        // os dados do usuario a ser registrado
         $userdata = Userdata::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -125,7 +140,10 @@ class RegisteredUserController extends Controller
     **/
     public function getPsicologos()
     {
+        // coleta os dados de id e nome no banco de dados de todos os psicologos
         $names = Userdata::where('role','psicologo')->pluck('id','name');
+        // profissionaisTransformados é utilizado para que na tela em que os dados sejam chamandos,
+        // os dados poderem ser acessados da forma => exemplo.id & exemplo.name.
         $profissionaisTransformados = $names->map(function ($id, $nome) {
             return ['name' => $nome, 'id' => $id];
         });

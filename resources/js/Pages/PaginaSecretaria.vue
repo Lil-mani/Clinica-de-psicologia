@@ -58,7 +58,7 @@
           <!-- <button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
             Register
           </button> -->
-          <button type="submit">Register</button>   
+          <button type="submit">Register</button>
         </div>
       </form>
     </div>
@@ -149,7 +149,7 @@
         selectedSection.value = section;
         fetchContacts();
       };
-
+      // api de cep
       const fetchAddress = async () => {
         if (form.cep.length === 8) {
             try {
@@ -173,7 +173,7 @@
       // funcao que pega os novos contatos, retorna um json
       const fetchContacts = async () => {
         try {
-            //console.log("tentando")
+            // vai na rota de contatos, coleta os mesmos e atribui para contacts
             const response = await axios.get('/api/contacts');
             contacts.value = response.data;
         } catch (error) {
@@ -182,7 +182,8 @@
     };
     const submit = () => {
             form.post(route('register'), {
-                // onFinish: () => 
+                // onFinish: () =>
+                // onFinish faz coisas quando ele registrar
             });
         };
       return {

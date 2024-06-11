@@ -118,11 +118,12 @@
       async fetchProfessionals() {
         try
         {
+            // coleta a lista de psicologos e a atribui para professionals.
           const response = await axios.get('/api/psychologists');
           this.professionals = response.data;
-          console.log(response);
-          console.log(this.professionals);
-          console.log(this.professionals.name)
+        //   console.log(response);
+        //   console.log(this.professionals);
+        //   console.log(this.professionals.name)
       } catch (error) {
         console.error(error);
       }

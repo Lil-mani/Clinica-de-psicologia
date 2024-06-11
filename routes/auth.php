@@ -11,6 +11,9 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// fiquem atentos que nessas rotas, post e get sao diferentes e podem ter o mesmo nome.
+
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
@@ -38,7 +41,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
-
+    // as duas rotas sao diferentes. uma é de post, outra de get. nao mexe.
     Route::post('register', [RegisteredUserController::class, 'store_no']);
 
     Route::get('verify-email', EmailVerificationPromptController::class)

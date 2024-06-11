@@ -29,7 +29,7 @@ Route::get('/usuario', [RegisteredUserController::class,'show']);
 Route::post('/records',[PatientRecordController::class,'store']);
 
 
-
+// rota utilizada para coletar a lista de psicologos atualmente cadastrada no banco de dados
 Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
 
 

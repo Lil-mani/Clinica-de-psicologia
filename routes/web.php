@@ -42,15 +42,17 @@ Route::get('/', function () {
 
 
 
+/*
+Rotas de login, ao usuário se conectar ao site com sucesso, a rota abaixo decide
+que tela ele irá ver.
+*/
 Route::get('/dashboard', function () {
+    // as duas linhas abaixo coletam o objeto user que esta logado para passar as rotas o nome, e em alguns casos o id do usuário atual
     $user = auth()->user();
     $role = DB::table('userdatas')->where('email', $user->email)->value('role');
-    $dados = DB::table('userdatas')->where('email', $user->email);
-    // $names = DB::table('userdatas')->where('role','psicologo')->pluck('name','id');
-    // Log::info($names);
-    $psicologos = DB::table('userdatas')->where('role','psicologo');
-    //Log::info($psicologos->name);
+    // registra no log o usuário que efetuou login com sucesso
     Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
+    // rotas de tela
     if ($role === 'psicologo') {
         return Inertia::render('PaginaPsicologo', ['user' => $user->name,'userid' => $user->id]);
     }
