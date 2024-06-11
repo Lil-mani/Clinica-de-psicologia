@@ -203,7 +203,7 @@
   export default {
     props: {
       user: String,
-      userid: BigInt
+      userid: [Number, String]
     },
     data() {
       return {
@@ -237,7 +237,7 @@
       }
       ,
       async submitRecord() {
-        try 
+        try
         {
         this.sessionData.email = '';
         this.sessionData.name = this.selectedPatient;
@@ -254,7 +254,7 @@
         this.consultations = response.data;
         console.log(this.consultations);
         this.patients = this.consultations.filter(consultation => {
-          return consultation.medic == this.user;
+          return consultation.medic == this.userid;
         });
         console.log(this.patients);
       } catch (error) {
@@ -266,7 +266,7 @@
         this.fetchUserData();
       }
     },
-    
+
     mounted() {
       this.fetchAppointments();
     },
@@ -331,7 +331,7 @@
       referralsMade: '',
       therapeuticsUsed: ''
     });
-      
+
       const sessionFields = ref([
         { key: 'profession', label: 'Profissão' },
         { key: 'maritalStatus', label: 'Est. Civil' },

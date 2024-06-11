@@ -46,17 +46,19 @@ Route::get('/dashboard', function () {
     $user = auth()->user();
     $role = DB::table('userdatas')->where('email', $user->email)->value('role');
     $dados = DB::table('userdatas')->where('email', $user->email);
-    $names = DB::table('userdatas')->where('role','psicologo')->pluck('name','id');
-    Log::info($names);
+    // $names = DB::table('userdatas')->where('role','psicologo')->pluck('name','id');
+    // Log::info($names);
+    $psicologos = DB::table('userdatas')->where('role','psicologo');
+    //Log::info($psicologos->name);
     Log::info('Acesso ao Dashboard:', ['user_id' => $user->id, 'role' => $role]);
     if ($role === 'psicologo') {
         return Inertia::render('PaginaPsicologo', ['user' => $user->name,'userid' => $user->id]);
-    }   
+    }
     elseif ($role === 'secretaria') {
         return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
     }
     elseif ($role === 'usuario' || $role === 'admin' || $role === 'user') {
-        return Inertia::render('PaginaUsuario', ['user' => $user->name,'names' => $names]);
+        return Inertia::render('PaginaUsuario', ['user' => $user->name]);
     }
     // elseif ($role === 'admin') {
     //     return Inertia::render('PaginaAdmin', ['user'=> $user->name]);
@@ -66,9 +68,9 @@ Route::get('/dashboard', function () {
     }
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/doctor', function () {
-    return Inertia::render('PaginaPsicologo');
-})->middleware(['auth',''])->name('doctor');
+// Route::get('/doctor', function () {
+//     return Inertia::render('PaginaPsicologo');
+// })->middleware(['auth',''])->name('doctor');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

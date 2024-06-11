@@ -120,13 +120,19 @@ class RegisteredUserController extends Controller
         $user->save();
         //Auth::login($user);
     }
+    /**
+      *  Retorna uma lista com os ids e nomes de todos os psicologos
+    **/
     public function getPsicologos()
     {
         $names = Userdata::where('role','psicologo')->pluck('id','name');
-        return response()->json($names);
+        $profissionaisTransformados = $names->map(function ($id, $nome) {
+            return ['name' => $nome, 'id' => $id];
+        });
+        return response()->json($profissionaisTransformados);
     }
     public function show() {
         $users = Userdata::get();
-        return response()->json($users);    
+        return response()->json($users);
     }
 }
