@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->string('patient');
-            $table->string('medic');
+            $table->foreignId('patient');
+            $table->foreignId('medic');
             $table->timestamp('time');
             $table->boolean('done')->default(false);
             $table->timestamps();

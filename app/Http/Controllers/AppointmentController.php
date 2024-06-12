@@ -17,8 +17,8 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'patient' => 'required|string|max:255',
-            'medic' => 'required|string|max:255',
+            'patient' => 'required|integer',
+            'medic' => 'required|integer',
             'time' => 'required|date',
             'done' => 'required',
         ]);
@@ -28,13 +28,13 @@ class AppointmentController extends Controller
     }
 
     public function show()
-    {    
+    {
         $appointments = Appointment::get();
         return response()->json($appointments);
     }
 
     public function update($id)
-    {    
+    {
         try {
         $appointment = Appointment::findOrFail($id);
         $appointment->done = true;

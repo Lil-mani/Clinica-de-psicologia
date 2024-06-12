@@ -107,6 +107,7 @@
 
   export default {
     props: {user: String,
+        userid: [Number,String]
             // psicologos: Object
     },
     mounted() {
@@ -136,7 +137,7 @@
     mounted() {
       this.fetchProfessionals()
     },
-    setup() {
+    setup(props) {
       const currentSection = ref('historico');
       const horarios = ref(['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']);
       const searchQuery = ref('');
@@ -144,10 +145,13 @@
       const historicoPage = ref(1);
       const itemsPerPage = 5;
       const historicoItemsPerPage = 5;
+
+      // consulta
       const appointment = ref({
-        date: '',
+        patient: props.userid,
+        medic : 1,
         time: '',
-        doctorId : 1
+        done: false
       });
 
       const professionals = ref([]);
@@ -228,7 +232,8 @@
 
       const showPopup = (professional) => {
         selectedProfessional.value = professional;
-
+        appointment.value.medic = professional.id;
+        console.log(appointment.value);
         // limpa as variaveis de horario, data e a mensagem de erro.
         horario_selecionado.value = "";
         data_selecionada.value = "";
@@ -277,16 +282,27 @@
         }
       };
 
-      const combinarDateTime = (data) =>{
+      const combinarDateTime = async (data) =>{
         // Verifica se a data e o horário foram inseridos
-        if (data && horario_selecionado.value) {
+        if (erroData.value) {
+            erroData.value = 'A data e horário escolhidos são inválidos.';
+        } else if (data && horario_selecionado.value) {
             // Combina a data e o horário
             dateTimeCombinado.value = data + ' ' + horario_selecionado.value;
             console.log(dateTimeCombinado.value);
             console.log("data e horario valido");
+            appointment.value.time = dateTimeCombinado.value;
+            try {
+            const response = await axios.post('/api/appointments', appointment.value);
+            console.log('Resposta do servidor: ', response.data);
+            popupVisible.value = false;
+            alert('Consulta agendada com sucesso.');
+            } catch (error) {
+                console.error('Erro ao enviar os dados:', error);
+            }
         } else {
             console.log("data e horario invalido");
-            erroData.value = 'Insira data e horário válidos.';
+            erroData.value = 'Horário não selecionado ou inválido.';
         }
       };
 

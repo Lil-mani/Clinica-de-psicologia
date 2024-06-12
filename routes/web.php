@@ -60,7 +60,7 @@ Route::get('/dashboard', function () {
         return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
     }
     elseif ($role === 'usuario' || $role === 'admin' || $role === 'user') {
-        return Inertia::render('PaginaUsuario', ['user' => $user->name]);
+        return Inertia::render('PaginaUsuario', ['user' => $user->name, 'userid' => $user->id]);
     }
     // elseif ($role === 'admin') {
     //     return Inertia::render('PaginaAdmin', ['user'=> $user->name]);
