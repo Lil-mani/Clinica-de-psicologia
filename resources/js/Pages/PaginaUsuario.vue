@@ -81,12 +81,16 @@
         </div>
         <div class="popup-content">
           <h2>Data de Agendamento</h2>
-          <input type="date" class="date-picker" v-model="appointment.date"/>
+          <input type="date" class="date-picker" v-model="data_selecionada" @change = "verificarData"/>
           <h3>Horário da Consulta</h3>
           <div class="horarios">
             <button class="horario-button" v-for="horario in horarios" :key="horario" @click="selectTime(horario)">{{ horario }}</button>
           </div>
-          <button class="confirmar-button" @click="confirmAppointment">Confirmar</button>
+          <!-- <p v-if="erroData" style="color: red;">{{ erroData }}</p> -->
+          <p v-if="horario_selecionado">Horário selecionado: {{ horario_selecionado }}</p>
+          <p v-if="erroData" style="color: red;">{{ erroData }}</p>
+          <!-- <button class="confirmar-button" @click="confirmAppointment">Confirmar</button> -->
+          <button class="confirmar-button" @click="combinarDateTime(data_selecionada)">Confirmar</button>
         </div>
       </div>
     </div>
@@ -127,8 +131,7 @@
       } catch (error) {
         console.error(error);
       }
-
-    }
+     }
     },
     mounted() {
       this.fetchProfessionals()
@@ -148,6 +151,12 @@
       });
 
       const professionals = ref([]);
+
+      // para combinacao de horario.
+      const dateTimeCombinado = ref('');
+      const horario_selecionado = ref('');
+      const data_selecionada = ref('');
+      const erroData = ref('');
 
       const historico = ref([
         { id: 1, professional: 'Ana Silva', date: '2023-01-15', time: '08:00', notes: 'Anotações da sessão 1' },
@@ -219,6 +228,13 @@
 
       const showPopup = (professional) => {
         selectedProfessional.value = professional;
+
+        // limpa as variaveis de horario, data e a mensagem de erro.
+        horario_selecionado.value = "";
+        data_selecionada.value = "";
+        erroData.value = "";
+
+        console.log(selectedProfessional.value)
         popupVisible.value = true;
       };
 
@@ -230,8 +246,65 @@
         alert(notes);
       };
 
+      const verificarData = () => {
+        erroData.value = ''; // Limpa mensagens de erro anteriores
+
+        const dataEscolhida = new Date(data_selecionada.value);
+        const hoje = new Date();
+        // todo -> resolver o tempo de ate 3 meses para marcar
+
+        // Zera a hora para comparação apenas de data
+        hoje.setHours(0, 0, 0, 0);
+        dataEscolhida.setHours(0, 0, 0, 0);
+
+        const ano = dataEscolhida.getFullYear();
+        const ano_atual = hoje.getFullYear();
+
+        if (ano > 2000) {
+            if (dataEscolhida < hoje) {
+                erroData.value = 'A data escolhida é inválida.';
+            } else if (dataEscolhida > hoje) {
+              if (ano == ano_atual) {
+                erroData.value = '';
+              } else {
+                erroData.value = 'A data escolhida é inválida.';
+              }
+            } else {
+                erroData.value = 'A data escolhida é inválida.';
+            }
+        } else {
+            erroData.value = 'A data escolhida é inválida.';
+        }
+      };
+
+      const combinarDateTime = (data) =>{
+        // Verifica se a data e o horário foram inseridos
+        if (data && horario_selecionado.value) {
+            // Combina a data e o horário
+            dateTimeCombinado.value = data + ' ' + horario_selecionado.value;
+            console.log(dateTimeCombinado.value);
+            console.log("data e horario valido");
+        } else {
+            console.log("data e horario invalido");
+            erroData.value = 'Insira data e horário válidos.';
+        }
+      };
+
+      const selectTime = (hora) => {
+        // appointment.value.date = hora;
+        console.log(hora);
+        horario_selecionado.value = hora;
+      };
 
       return {
+        data_selecionada,
+        verificarData,
+        erroData,
+        dateTimeCombinado,
+        horario_selecionado,
+        combinarDateTime,
+        appointment,
+        selectTime,
         currentSection,
         searchQuery,
         currentPage,
