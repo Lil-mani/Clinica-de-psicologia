@@ -34,7 +34,7 @@
                 <td>{{ historico.professional }}</td>
                 <td>{{ historico.date }}</td>
                 <td>{{ historico.time }}</td>
-                <td><button @click="viewNotes(historico.notes)">Ver Anotações</button></td>
+                <td><button @click="fetchPastAppointments">Ver Anotações</button></td>
               </tr>
             </tbody>
           </table>
@@ -65,7 +65,31 @@
         </div>
 
         <div v-if="currentSection === 'consultas'" class="section">
-          <!-- Conteúdo das Consultas -->
+            <h2>Consultas Futuras</h2>
+          <p>Aqui é possível ver suas consultas marcadas!</p>
+          <table class="historico-table">
+            <thead>
+              <tr>
+                <th>Profissional</th>
+                <th>Data</th>
+                <th>Horário</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="historico in paginatedHistorico" :key="historico.id">
+                <td>{{ historico.professional }}</td>
+                <td>{{ historico.date }}</td>
+                <td>{{ historico.time }}</td>
+                <!-- <td><button @click="viewNotes(historico.notes)">Ver Anotações</button></td> -->
+                 <!-- um possivel botao de deletar consulta / reagendar -->
+              </tr>
+            </tbody>
+          </table>
+          <div class="pagination">
+            <button @click="prevHistoricoPage" :disabled="historicoPage === 1">Anterior</button>
+            <span>Página {{ historicoPage }} de {{ totalHistoricoPages }}</span>
+            <button @click="nextHistoricoPage" :disabled="historicoPage === totalHistoricoPages">Próxima</button>
+          </div>
         </div>
       </div>
 
@@ -181,8 +205,9 @@
           professional.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       });
-
+      // TODO: CORRIGIR ISSO
       const totalPages = computed(() => {
+        // console.log('debug totalpages:',filteredProfessionals.value);
         return Math.ceil(filteredProfessionals.value.length / itemsPerPage);
       });
 
@@ -306,13 +331,36 @@
         }
       };
 
+      // seta o tempo
       const selectTime = (hora) => {
         // appointment.value.date = hora;
         console.log(hora);
         horario_selecionado.value = hora;
       };
 
+      const fetchPastAppointments = async () => {
+        axios.get(`/api/userpastappointments/${props.userid}`)
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log('Erro ao buscar consultas:', error);
+            });
+      };
+
+      const fetchFutureAppointments = async () => {
+        axios.get(`/api/userfutureappointments/${props.userid}`)
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log('Erro ao buscar consultas:', error);
+            });
+      };
+
       return {
+        fetchPastAppointments,
+        fetchFutureAppointments,
         data_selecionada,
         verificarData,
         erroData,

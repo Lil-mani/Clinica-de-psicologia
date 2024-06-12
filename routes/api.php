@@ -24,8 +24,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // rota para guardar info de contato
 Route::post('/contacts', [ContactController::class, 'store']);
 Route::get('/contacts', [ContactController::class, 'index']);
+
 Route::post('/appointments', [AppointmentController::class,'store']);
 Route::get('/appointments', [AppointmentController::class, 'show']);
+Route::get('/userfutureappointments/{id}', [AppointmentController::class,'show_future_patient_appointments']);
+Route::get('/userpastappointments/{id}', [AppointmentController::class,'show_past_patient_appointments']);
+
 Route::get('/usuario', [RegisteredUserController::class,'show']);
 Route::post('/records',[PatientRecordController::class,'store']);
 

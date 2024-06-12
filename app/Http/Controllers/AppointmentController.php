@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Models\Userdata;
+use Illuminate\Support\Facades\Log;
+
 
 class AppointmentController extends Controller
 {
@@ -30,6 +33,27 @@ class AppointmentController extends Controller
     public function show()
     {
         $appointments = Appointment::get();
+        return response()->json($appointments);
+    }
+
+    /**
+     * Retorna todas as consultas futuras do paciente de id fornecido.
+     */
+    public function show_future_patient_appointments($id) {
+        $now = Carbon::now();
+        $appointments = Appointment::where('patient', $id)
+                                    ->where('time', '>', $now)
+                                    ->get();
+        return response()->json($appointments);
+    }
+    /**
+     * Retorna todas as consultas passadas do paciente de id fornecido.
+     */
+    public function show_past_patient_appointments($id) {
+        $now = Carbon::now();
+        $appointments = Appointment::where('patient', $id)
+                                    ->where('time', '<', $now)
+                                    ->get();
         return response()->json($appointments);
     }
 
