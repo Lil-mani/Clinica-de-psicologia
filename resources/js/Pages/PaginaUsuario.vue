@@ -34,7 +34,7 @@
                 <td>{{ historico.professional }}</td>
                 <td>{{ historico.date }}</td>
                 <td>{{ historico.time }}</td>
-                <td><button @click="fetchPastAppointments">Ver Anotações</button></td>
+                <td><button @click="fetchFutureAppointments">Ver Anotações</button></td>
               </tr>
             </tbody>
           </table>
@@ -71,15 +71,13 @@
             <thead>
               <tr>
                 <th>Profissional</th>
-                <th>Data</th>
-                <th>Horário</th>
+                <th>Data & Hora</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="historico in paginatedHistorico" :key="historico.id">
-                <td>{{ historico.professional }}</td>
-                <td>{{ historico.date }}</td>
-                <td>{{ historico.time }}</td>
+              <tr v-for="consulta in consultasFuturas" :key="historico.id">
+                <td>{{ consulta.medic }}</td>
+                <td>{{ consulta.time }}</td>
                 <!-- <td><button @click="viewNotes(historico.notes)">Ver Anotações</button></td> -->
                  <!-- um possivel botao de deletar consulta / reagendar -->
               </tr>
@@ -156,10 +154,34 @@
       } catch (error) {
         console.error(error);
       }
-     }
+     },
+     async fetchPastAppointments() {
+        axios.get(`/api/userpastappointments/${this.userid}`)
+            .then(response => {
+                // console.log(response.data);
+                this.consultasPassadas = response.data;
+                console.log(this.consultasPassadas);
+            })
+            .catch(error => {
+                console.log('Erro ao buscar consultas:', error);
+            });
+      },
+
+      async fetchFutureAppointments (){
+        axios.get(`/api/userfutureappointments/${this.userid}`)
+            .then(response => {
+                this.consultasFuturas = response.data;
+                console.log(this.consultasFuturas);
+            })
+            .catch(error => {
+                console.log('Erro ao buscar consultas:', error);
+            });
+      }
     },
     mounted() {
-      this.fetchProfessionals()
+      this.fetchProfessionals();
+      this.fetchFutureAppointments();
+      this.fetchPastAppointments();
     },
     setup(props) {
       const currentSection = ref('historico');
@@ -185,6 +207,9 @@
       const horario_selecionado = ref('');
       const data_selecionada = ref('');
       const erroData = ref('');
+
+      const consultasPassadas = ref([]);
+      const consultasFuturas = ref([]);
 
       const historico = ref([
         { id: 1, professional: 'Ana Silva', date: '2023-01-15', time: '08:00', notes: 'Anotações da sessão 1' },
@@ -338,29 +363,34 @@
         horario_selecionado.value = hora;
       };
 
-      const fetchPastAppointments = async () => {
-        axios.get(`/api/userpastappointments/${props.userid}`)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(error => {
-                console.log('Erro ao buscar consultas:', error);
-            });
-      };
+    //   const fetchPastAppointments = async () => {
+    //     axios.get(`/api/userpastappointments/${props.userid}`)
+    //         .then(response => {
+    //             // console.log(response.data);
+    //             consultasPassadas.value = response.data;
+    //             console.log(consultasPassadas.value);
+    //         })
+    //         .catch(error => {
+    //             console.log('Erro ao buscar consultas:', error);
+    //         });
+    //   };
 
-      const fetchFutureAppointments = async () => {
-        axios.get(`/api/userfutureappointments/${props.userid}`)
-            .then(response => {
-                console.log(response.data);
-            })
-            .catch(error => {
-                console.log('Erro ao buscar consultas:', error);
-            });
-      };
+    //   const fetchFutureAppointments = async () => {
+    //     axios.get(`/api/userfutureappointments/${props.userid}`)
+    //         .then(response => {
+    //             consultasFuturas.value = response.data;
+    //             console.log(consultasFuturas.value);
+    //         })
+    //         .catch(error => {
+    //             console.log('Erro ao buscar consultas:', error);
+    //         });
+    //   };
 
       return {
-        fetchPastAppointments,
-        fetchFutureAppointments,
+        consultasPassadas,
+        consultasFuturas,
+        // fetchPastAppointments,
+        // fetchFutureAppointments,
         data_selecionada,
         verificarData,
         erroData,

@@ -44,6 +44,14 @@ class AppointmentController extends Controller
         $appointments = Appointment::where('patient', $id)
                                     ->where('time', '>', $now)
                                     ->get();
+        $appointments->transform(function ($appointment) {
+        if ($appointment->medic) {
+            // Substituir 'medic' pelo nome do médico
+            $name = Userdata::where('id', $appointment->medic)->value('name');
+            $appointment->medic = $name;
+        }
+        return $appointment;
+        });
         return response()->json($appointments);
     }
     /**
@@ -54,6 +62,14 @@ class AppointmentController extends Controller
         $appointments = Appointment::where('patient', $id)
                                     ->where('time', '<', $now)
                                     ->get();
+        $appointments->transform(function ($appointment) {
+        if ($appointment->medic) {
+            // Substituir 'medic' pelo nome do médico
+            $name = Userdata::where('id', $appointment->medic)->value('name');
+            $appointment->medic = $name;
+        }
+        return $appointment;
+        });
         return response()->json($appointments);
     }
 

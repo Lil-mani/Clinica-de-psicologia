@@ -149,6 +149,7 @@ class RegisteredUserController extends Controller
         });
         return response()->json($profissionaisTransformados);
     }
+
     public function show() {
         $users = Userdata::get();
         return response()->json($users);
