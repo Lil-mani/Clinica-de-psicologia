@@ -144,7 +144,24 @@
         isSidebarHidden.value = !isSidebarHidden.value;
       };
 
-
+      const resetForm = () => {
+        form.value = {
+            name: '',
+            email: '',
+            password: '',
+            password_confirmation: '',
+            cpf: '',
+            telefone: '',
+            dob: '',
+            cep: '',
+            logradouro: '',
+            complemento: '',
+            bairro: '',
+            localidade: '',
+            uf: '',
+            role: 'usuario'
+        };
+        };
       const selectSection = (section) => {
         selectedSection.value = section;
         fetchContacts();
@@ -182,8 +199,13 @@
     };
     const submit = () => {
             form.post(route('register'), {
-                // onFinish: () =>
-                // onFinish faz coisas quando ele registrar
+                onSuccess: () => {
+                    resetForm();  // Chama a função de reset após o sucesso na submissão
+                    alert('Usuário registrado com sucesso!');
+                },
+                onError: () => {
+                    alert('Erro ao tentar registrar o usuário.');
+                }
             });
         };
       return {
@@ -197,7 +219,8 @@
         contacts,
         form,
         submit,
-        contact
+        contact,
+        resetForm
       };
     }
   }

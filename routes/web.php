@@ -59,12 +59,12 @@ Route::get('/dashboard', function () {
     elseif ($role === 'secretaria') {
         return Inertia::render('PaginaSecretaria', ['user' => $user->name]);
     }
-    elseif ($role === 'usuario' || $role === 'admin' || $role === 'user') {
+    elseif ($role === 'usuario' || $role === 'user') {
         return Inertia::render('PaginaUsuario', ['user' => $user->name, 'userid' => $user->id]);
     }
-    // elseif ($role === 'admin') {
-    //     return Inertia::render('PaginaAdmin', ['user'=> $user->name]);
-    // }
+    elseif ($role === 'admin') {
+        return Inertia::render('PaginaAdmin', ['user'=> $user->name]);
+    }
     else {
         abort(403,'Não autorizado');
     }

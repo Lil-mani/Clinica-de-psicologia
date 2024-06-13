@@ -360,6 +360,9 @@
       const selectTime = (hora) => {
         // appointment.value.date = hora;
         console.log(hora);
+        if (erroData.value == 'Horário não selecionado ou inválido.') {
+            erroData.value = '';
+        }
         horario_selecionado.value = hora;
       };
 
