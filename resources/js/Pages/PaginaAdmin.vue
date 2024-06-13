@@ -10,7 +10,7 @@
         </div>
         <nav class="nav-menu">
           <ul>
-            <li @click="selectSection('Novos Contatos')" :class="{ active: selectedSection === 'Novos Contatos' }">Novos Contatos</li>
+            <li @click="selectSection('Novos Contatos')" :class="{ active: selectedSection === 'Novos Contatos' }">Registrar Funcionários</li>
             <li @click="logout">Sair</li>
           </ul>
         </nav>
@@ -22,7 +22,7 @@
         </button>
 
         <div v-if="selectedSection === 'Novos Contatos'">
-            <h2 class="section-title">Novos Contatos</h2>
+            <h2 class="section-title">Registrar Funcionários</h2>
                 <ul>
                     <form @submit.prevent="submit">
                         <div class="form-row">
@@ -57,6 +57,7 @@
                         <label for="cep">CEP:</label>
                         <input type="text" id="cep" v-model="form.cep" @blur="fetchAddress">
                         </div>
+                        <p v-if="erroCep" style="color: red;">{{ erroCep }}</p>
                         <div class="form-row">
                         <label for="logradouro">Logradouro:</label>
                         <input type="text" id="logradouro" v-model="form.logradouro">
@@ -180,6 +181,7 @@
       const contacts = ref([]);
       const contact = ref(0);
       const modalVisible = ref(false);
+      const erroCep = ref('');
       const form = useForm({
         name: '',
         email: '',
@@ -208,6 +210,7 @@
       };
       // api de cep
       const fetchAddress = async () => {
+        erroCep.value = ''; 
         if (form.cep.length === 8) {
             try {
                 const response = await axios.get(`https://viacep.com.br/ws/${form.cep}/json/`);
@@ -218,7 +221,7 @@
                     form.localidade = response.data.localidade;
                     form.uf = response.data.uf;
                 } else {
-                    alert('CEP não encontrado.');
+                    erroCep.value = 'CEP não encontrado.';
                 }
             } catch (error) {
                 console.error('Erro ao buscar o CEP:', error);
@@ -269,6 +272,7 @@
             });
         };
       return {
+        erroCep,
         resetForm,
         modalVisible,
         isSidebarHidden,
