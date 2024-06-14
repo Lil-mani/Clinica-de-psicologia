@@ -11,6 +11,7 @@
         <nav class="nav-menu">
           <ul>
             <li @click="selectSection('Novos Contatos')" :class="{ active: selectedSection === 'Novos Contatos' }">Registrar Funcionários</li>
+            <li @click="selectSection('Lista de Usuários')" :class="{ active: selectedSection === 'Lista de Usuários' }">Lista de Usuários</li>
             <li @click="logout">Sair</li>
           </ul>
         </nav>
@@ -92,6 +93,32 @@
                     </form>
                 </ul>
         </div>
+        <div v-if="selectedSection === 'Lista de Usuários'">
+        <h2 class="section-title">Usuários Cadastrados</h2>
+        <div class="users-list">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Função</th>
+                <!-- <th>Ações</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="user in users" :key="user.id">
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <!-- <td>
+                  <button @click="editUser(user)">Editar</button>
+                  <button @click="deleteUser(user.id)">Excluir</button>
+                </td> -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
         <!-- Modal -->
     <div v-if="modalVisible" class="modal">
       <form @submit.prevent="submit">
@@ -131,6 +158,7 @@
   import { Head, Link, useForm } from '@inertiajs/vue3';
   import { faUserCircle, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
   import DocumentEditor from '../Components/DocumentEditor.vue';
+import axios from 'axios';
 
 
   library.add(faUserCircle, faArrowLeft, faArrowRight);
@@ -182,6 +210,7 @@
       const contact = ref(0);
       const modalVisible = ref(false);
       const erroCep = ref('');
+      const users = ref([]);
       const form = useForm({
         name: '',
         email: '',
@@ -206,7 +235,7 @@
 
       const selectSection = (section) => {
         selectedSection.value = section;
-        fetchContacts();
+        fetchUsers();
       };
       // api de cep
       const fetchAddress = async () => {
@@ -229,17 +258,13 @@
             }
         }
     };
-
-      // funcao que pega os novos contatos, retorna um json
-      const fetchContacts = async () => {
-        try {
-            // vai na rota de contatos, coleta os mesmos e atribui para contacts
-            const response = await axios.get('/api/contacts');
-            contacts.value = response.data;
-        } catch (error) {
-            console.error('Failed to fetch contacts:', error);
-        }
-    };
+      const fetchUsers = async () => {
+          const response = await axios.get('/api/usuarios')
+              .then(response => {
+                users.value = response.data;
+                console.log(response.data);
+              });
+      };
 
     const resetForm = () => {
         form.value = {
@@ -272,12 +297,13 @@
             });
         };
       return {
+        users,
+        fetchUsers,
         erroCep,
         resetForm,
         modalVisible,
         isSidebarHidden,
         fetchAddress,
-        fetchContacts,
         toggleSidebar,
         selectedSection,
         selectSection,

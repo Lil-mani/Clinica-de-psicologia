@@ -30,7 +30,7 @@ Route::get('/appointments', [AppointmentController::class, 'show']);
 Route::get('/userfutureappointments/{id}', [AppointmentController::class,'show_future_patient_appointments']);
 Route::get('/userpastappointments/{id}', [AppointmentController::class,'show_past_patient_appointments']);
 
-Route::get('/usuario', [RegisteredUserController::class,'show']);
+Route::get('/usuarios', [RegisteredUserController::class,'show']);
 Route::post('/records',[PatientRecordController::class,'store']);
 
 
