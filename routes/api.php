@@ -5,6 +5,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PatientRecordController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,10 @@ Route::get('/userpastappointments/{id}', [AppointmentController::class,'show_pas
 Route::get('/usuarios', [RegisteredUserController::class,'show']);
 Route::post('/records',[PatientRecordController::class,'store']);
 
+// Rotas de notificação; Usadas nas telas de Psicologo & Secretaria
+Route::post('/notify', [NotificationController::class,'notify']);
+Route::get('/notifications', [NotificationController::class,'show']);
+Route::post('/notifications', [NotificationController::class,'markRead']);
 
 // rota utilizada para coletar a lista de psicologos atualmente cadastrada no banco de dados
 Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
