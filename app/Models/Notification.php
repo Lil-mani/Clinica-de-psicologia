@@ -11,5 +11,5 @@ class notification extends Model
 
     protected $table = 'notifications';
 
-    protected $fillable = ['psicologo','message','read'];
+    protected $fillable = ['psicologo','consulta','message','read'];
 }

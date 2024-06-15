@@ -10,6 +10,7 @@ class NotificationController extends Controller
     public function notify(Request $request) {
         $notification = Notification::create([
             'psicologo' => $request->psicologo,
+            'consulta' => $request->consulta,
             'message' => $request->message,
         ]);
 
