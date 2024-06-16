@@ -77,7 +77,7 @@ class AppointmentController extends Controller
     /**
      * Função para a secretaria. Mostra todas as consultas do dia.
      */
-    public function show_today_appointments($id) {
+    public function show_today_appointments() {
         $todayStart = Carbon::today();
         $todayEnd = Carbon::today()->endOfDay();
         $appointments = Appointment::where('time', '>=', $todayStart)
