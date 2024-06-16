@@ -35,7 +35,8 @@ Route::get('/appointments/today', [AppointmentController::class,'show_today_appo
 Route::get('/appointments/today/{id}', [AppointmentController::class,'show_today_appointments_psychologist']);
 Route::post('/appointments/update/{id}', [AppointmentController::class,'update']);
 
-Route::get('/usuarios/{id}', [RegisteredUserController::class,'showName']);
+Route::get('/usuarios/nome/{id}', [RegisteredUserController::class,'showName']);
+Route::get('/usuarios/{id}', [RegisteredUserController::class,'showUserInfo']);
 Route::get('/usuarios', [RegisteredUserController::class,'show']);
 Route::post('/records',[PatientRecordController::class,'store']);
 

@@ -303,14 +303,19 @@
 
       const verificarData = () => {
         erroData.value = ''; // Limpa mensagens de erro anteriores
-
+        console.log(data_selecionada.value);
         const dataEscolhida = new Date(data_selecionada.value);
+        dataEscolhida.setHours(dataEscolhida.getHours() + 3);
         const hoje = new Date();
+        console.log('data selecionada:', dataEscolhida);
+        console.log('Hoje:',hoje);
         // todo -> resolver o tempo de ate 3 meses para marcar
 
         // Zera a hora para comparação apenas de data
         hoje.setHours(0, 0, 0, 0);
         dataEscolhida.setHours(0, 0, 0, 0);
+        console.log('pos data selecionada:', dataEscolhida);
+        console.log('pos Hoje:',hoje);
 
         const ano = dataEscolhida.getFullYear();
         const ano_atual = hoje.getFullYear();
@@ -318,7 +323,7 @@
         if (ano > 2000) {
             if (dataEscolhida < hoje) {
                 erroData.value = 'A data escolhida é inválida.';
-            } else if (dataEscolhida > hoje) {
+            } else if (dataEscolhida >= hoje) {
               if (ano == ano_atual) {
                 erroData.value = '';
               } else {

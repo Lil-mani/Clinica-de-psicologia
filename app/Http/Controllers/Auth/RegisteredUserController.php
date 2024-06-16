@@ -163,4 +163,23 @@ class RegisteredUserController extends Controller
         $users = Userdata::get();
         return response()->json($users);
     }
+
+    public function showUserInfo($id) {
+        $users = Userdata::find($id);
+        $user = $users->map(function ($user) {
+            return ['name' => $user->name,
+            'email' => $user->email,
+            'cpf' => $user->cpf,
+            'telefone' => $user->telefone,
+            'dob' -> $user->dob,
+            'cep' => $user->cep,
+            'logradouro' => $user->logradouro,
+            'complemento' => $user->complemento,
+            'bairro' => $user->bairro,
+            'localidade' => $user->localdidade,
+            'uf' => $user->uf,
+        ];
+        });
+        return response()->json($user);
+    }
 }
