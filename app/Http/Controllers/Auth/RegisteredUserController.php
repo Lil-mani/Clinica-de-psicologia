@@ -150,6 +150,15 @@ class RegisteredUserController extends Controller
         return response()->json($profissionaisTransformados);
     }
 
+    /**
+     * Função puxa o nome do usuario de id fornecido.
+     */
+    public function showName($id) {
+        $user = Userdata::find($id);
+        return response()->json($user->name);
+    }
+
+
     public function show() {
         $users = Userdata::get();
         return response()->json($users);

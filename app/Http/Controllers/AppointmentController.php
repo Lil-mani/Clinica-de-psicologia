@@ -73,6 +73,34 @@ class AppointmentController extends Controller
         return response()->json($appointments);
     }
 
+
+    /**
+     * Função para a secretaria. Mostra todas as consultas do dia.
+     */
+    public function show_today_appointments($id) {
+        $todayStart = Carbon::today();
+        $todayEnd = Carbon::today()->endOfDay();
+        $appointments = Appointment::where('time', '>=', $todayStart)
+                               ->where('time', '<=', $todayEnd)
+                               ->get();
+        return response()->json($appointments);
+    }
+    /**
+     * Função para a psicologa. Mostra todas as consultas dela do dia.
+     */
+    public function show_today_appointments_psychologist($id) {
+        $todayStart = Carbon::today();
+        $todayEnd = Carbon::today()->endOfDay();
+        $appointments = Appointment::where('medic', $id)
+                               ->where('time', '>=', $todayStart)
+                               ->where('time', '<=', $todayEnd)
+                               ->get();
+        return response()->json($appointments);
+    }
+
+    /**
+     * Atualiza a consulta como 'done'
+     */
     public function update($id)
     {
         try {
