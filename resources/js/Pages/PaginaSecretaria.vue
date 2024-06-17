@@ -11,6 +11,7 @@
         <nav class="nav-menu">
           <ul>
             <li @click="selectSection('Novos Contatos')" :class="{ active: selectedSection === 'Novos Contatos' }">Novos Contatos</li>
+            <li @click="selectSection('Consultas')" :class="{ active: selectedSection === 'Consultas' }">Consultas</li>
             <li @click="logout">Sair</li>
           </ul>
         </nav>
@@ -33,6 +34,27 @@
                         </div>
                     </li>
                 </ul>
+        </div>
+
+        <div v-if="selectedSection === 'Consultas'" class="section">
+          <h2>Histórico de Consultas</h2>
+          <p>Aqui é possível ver suas sessões antigas!</p>
+          <table class="historico-table">
+            <thead>
+              <tr>
+                <th>Profissional</th>
+                <th>Data</th>
+                <th>Anotações de Sessão</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="historico in consultas" :key="historico.id">
+                <td>{{ historico.nome }}</td>
+                <td>{{ historico.time }}</td>
+                <td><button @click="notificar(historico.medic)">Notificar profissional</button></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
         <!-- Modal -->
     <div v-if="modalVisible" class="modal">
@@ -105,6 +127,23 @@
         logout() {
             this.$inertia.post('/logout');
         },
+        async notificar(id) {
+            try {
+                const response = await axios.post(`/api/notify/${id}`);
+                alert(response.data.message);
+            } catch (error) {
+                console.log('Erro ao notificar:',error);
+            }
+        },
+        async getName(id) {
+            try {
+                const response = await axios.get(`/api/usuarios/nome/${id}`);
+                return response.data; // Assumindo que 'data' contém o nome diretamente
+            } catch (error) {
+                console.error('Erro ao buscar o nome:', error);
+                return ''; // Retorna string vazia ou manipula o erro conforme necessário
+            }
+        },
         showModal(contact) {
             this.form.email = contact.email; // Pré-popular o campo de e-mail, se desejado
             this.form.name = contact.name;
@@ -112,6 +151,29 @@
             this.contact = contact.id;
             this.modalVisible = true;
         },
+        async fetchAppointments() {
+            try {
+                const response = await axios.get('/api/appointments/today');
+                const consultas = response.data;
+
+                // Adiciona o nome a cada consulta
+                const consultasComNomes = await Promise.all(
+                    consultas.map(async consulta => {
+                        const nome = await this.getName(consulta.medic); // Assumindo que cada consulta tem um 'userId'
+                        return { ...consulta, nome }; // Retorna a consulta original com o nome adicionado
+                    })
+                );
+
+                this.consultas = consultasComNomes;
+                console.log(this.consultas);
+            } catch (error) {
+                console.log('Erro ao adquirir consultas:', error);
+            }
+        }
+
+    },
+    mounted() {
+        this.fetchAppointments();
     },
     components: {
       FontAwesomeIcon,
@@ -122,6 +184,7 @@
       const selectedSection = ref('Novos Contatos');
       const contacts = ref([]);
       const contact = ref(0);
+      const consultas = ref([]);
       const modalVisible = ref(false);
       const form = useForm({
         name: '',
@@ -210,6 +273,7 @@
         };
       return {
         modalVisible,
+        consultas,
         isSidebarHidden,
         fetchAddress,
         fetchContacts,
@@ -441,4 +505,18 @@
   border-radius: 8px;  /* Cantos arredondados para um visual mais suave */
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);  /* Sombra sutil para profundidade */
 }
+.section {
+    margin-bottom: 40px;
+  }
+
+  .section h2 {
+    font-size: 36px; /* Aumenta o tamanho do título */
+    font-weight: bold; /* Deixa o título em negrito */
+    color: #474A59; /* Define a cor do título */
+  }
+
+  .section p {
+    font-size: 18px; /* Aumenta o tamanho do texto abaixo do título */
+    color: #474A59; /* Define a cor do texto */
+  }
   </style>

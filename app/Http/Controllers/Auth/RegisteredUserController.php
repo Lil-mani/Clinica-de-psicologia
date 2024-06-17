@@ -165,21 +165,26 @@ class RegisteredUserController extends Controller
     }
 
     public function showUserInfo($id) {
-        $users = Userdata::find($id);
-        $user = $users->map(function ($user) {
-            return ['name' => $user->name,
-            'email' => $user->email,
-            'cpf' => $user->cpf,
-            'telefone' => $user->telefone,
-            'dob' -> $user->dob,
-            'cep' => $user->cep,
-            'logradouro' => $user->logradouro,
-            'complemento' => $user->complemento,
-            'bairro' => $user->bairro,
-            'localidade' => $user->localdidade,
-            'uf' => $user->uf,
-        ];
-        });
-        return response()->json($user);
+        $user = Userdata::find($id);
+
+        if ($user) {
+            $userInfo = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'cpf' => $user->cpf,
+                'telefone' => $user->telefone,
+                'dob' => $user->dob, // Corrigido de 'dob' -> para 'dob' =>
+                'cep' => $user->cep,
+                'logradouro' => $user->logradouro,
+                'complemento' => $user->complemento,
+                'bairro' => $user->bairro,
+                'localidade' => $user->localidade, // Corrigido de 'localdidade' para 'localidade'
+                'uf' => $user->uf
+            ];
+
+        return response()->json($userInfo);
+    } else {
+        return response()->json(['message' => 'User not found'], 404);
+    }
     }
 }

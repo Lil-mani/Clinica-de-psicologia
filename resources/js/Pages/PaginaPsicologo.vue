@@ -10,8 +10,9 @@
         </div>
         <nav class="nav-menu">
           <ul>
-            <li @click="selectSection('Pacientes')" :class="{ active: selectedSection === 'Pacientes' }">Pacientes</li>
+            <li @click="selectSection('Pacientes')" :class="{ active: selectedSection === 'Pacientes' }">Pacientes de Hoje</li>
             <li @click="selectSection('Documentos')" :class="{ active: selectedSection === 'Documentos' }">Documentos</li>
+            <li @click="selectSection('Notificacoes')" :class="{ active: selectedSection === 'Notificacoes' }">Notificações</li>
             <li @click="logout">Sair</li>
           </ul>
         </nav>
@@ -21,55 +22,63 @@
         <button @click="toggleSidebar" class="toggle-button">
           <font-awesome-icon :icon="[isSidebarHidden ? 'arrow-right' : 'arrow-left']" />
         </button>
-
+        <!-- Adicionando a seção de notificações -->
+        <div v-if="selectedSection === 'Notificacoes'">
+            <h2 class="section-title">Notificações</h2>
+            <ul class="notification-list">
+              <li v-for="notification in notifications" :key="notification.id" :class="{ unread: !notification.read }">
+                {{ notification.message }}
+                <button @click="markNotificationAsRead(notification.id)">Marcar como lida</button>
+              </li>
+            </ul>
+        </div>
         <div v-if="selectedSection === 'Pacientes'">
-          <h2 class="section-title">Pacientes</h2>
+          <h2 class="section-title">Pacientes de hoje</h2>
           <ul class="patients-list">
             <li v-for="patient in patients" :key="patient.id" class="patient-item">
               <div v-if=" patient.done === 0 "class="info">
-                <p class="name">{{ patient.patient }}</p>
                 <p class="appointment-time">{{ patient.time }}</p>
               </div>
-              <button @click="showPatientRecord(patient.patient)" class="record-button">Ficha</button>
+              <button @click="showPatientRecord(patient.patient,patient.id)" class="record-button">Ficha</button>
             </li>
           </ul>
 
-          <div v-if="selectedPatient" class="patient-record">
-            <!---<h3>Ficha do Paciente</h3>
+          <div v-if="currUserData" class="patient-record">
+            <h3>Ficha do Paciente</h3>
              <div class="form-row">
-              <label>Nome Completo:</label>
-              <p>{{ selectedPatient.name }}</p>
-              <label>Email:</label>
-              <p>{{ selectedPatient.email }}</p>
+              <label>Nome Completo: {{ currUserData.name }}</label>
+              <!-- <p></p> -->
+              <label>Email: {{ currUserData.email }}</label>
+              <!-- <p></p> -->
             </div>
             <div class="form-row">
               <label>CPF:</label>
-              <p>{{ selectedPatient.cpf }}</p>
+              <p>{{ currUserData.cpf }}</p>
               <label>Telefone:</label>
-              <p>{{ selectedPatient.phone }}</p>
+              <p>{{ currUserData.telefone }}</p>
             </div>
             <div class="form-row">
               <label>Data de Nascimento:</label>
-              <p>{{ selectedPatient.birthdate }}</p>
+              <p>{{ currUserData.dob }}</p>
               <label>CEP:</label>
-              <p>{{ selectedPatient.cep }}</p>
+              <p>{{ currUserData.cep }}</p>
             </div>
             <div class="form-row">
               <label>Logradouro:</label>
-              <p>{{ selectedPatient.street }}</p>
+              <p>{{ currUserData.logradouro }}</p>
               <label>Complemento:</label>
-              <p>{{ selectedPatient.complement }}</p>
+              <p>{{ currUserData.complemento }}</p>
             </div>
             <div class="form-row">
               <label>Bairro:</label>
-              <p>{{ selectedPatient.neighborhood }}</p>
+              <p>{{ currUserData.bairro }}</p>
               <label>Cidade:</label>
-              <p>{{ selectedPatient.city }}</p>
+              <p>{{ currUserData.localidade }}</p>
             </div>
             <div class="form-row">
               <label>UF:</label>
-              <p>{{ selectedPatient.state }}</p>
-            </div> -->
+              <p>{{ currUserData.uf }}</p>
+            </div>
 
             <h3>Informações de Sessão</h3>
             <div class="session-info">
@@ -214,21 +223,21 @@
         logout() {
             this.$inertia.post('/logout');
         },
-        fetchAppointments() {
-          console.log(`/appointments`);
-          axios.get(`/appointments`)
-            .then(response => {
-              this.appointments = response.data;
-            })
-            .catch(error => {
-              console.error('Erro ao buscar consultas:', error);
-            });
-      },
+        async fetchNotifications() {
+            try {
+                const response = await axios.get(`/api/notifications/${this.userid}`);
+                this.notifications = response.data;
+                console.log(response.data);
+
+            } catch (error) {
+                console.error('Erro ao buscar notificações:',error);
+            }
+        },
       async fetchUserData() {
           try {
-              const response = await axios.get('/api/usuario'); // Ajuste a URL conforme a rota correta
+              const response = await axios.get(`/api/usuarios/${this.selectedPatient}`); // Ajuste a URL conforme a rota correta
               console.log(response.data);
-              this.currUserData = response.data.filter(dado => dado.nome == this.selectedPatient);
+              this.currUserData = response.data;
               console.log(this.selectedPatient)
               console.log(this.currUserData)
           } catch (error) {
@@ -237,7 +246,7 @@
       }
       ,
       async submitRecord() {
-        try
+        try // REFAZER
         {
         this.sessionData.email = '';
         this.sessionData.name = this.selectedPatient;
@@ -248,9 +257,20 @@
         }
       }
       ,
+      async markNotificationAsRead(id) {
+        try {
+                const response = await axios.post(`/api/notifications/${id}`);
+                console.log(response.data);
+                this.fetchNotifications(); // nao testei aqui
+            } catch (error) {
+                console.error('Erro ao marcar notificação:',error);
+            }
+      }
+      ,
       async fetchAppointments() {
       try {
-        const response = await axios.get('/api/appointments');
+        console.log(`/api/appointments/today/${this.userid}`);
+        const response = await axios.get(`/api/appointments/today/${this.userid}`);
         this.consultations = response.data;
         console.log(this.consultations);
         this.patients = this.consultations.filter(consultation => {
@@ -261,14 +281,22 @@
         console.error('Erro ao recuperar as consultas:', error);
       }
     },
-    showPatientRecord (patient) {
+    showPatientRecord (patient, id) {
         this.selectedPatient = patient;
+        this.currAppointmentId = id;
         this.fetchUserData();
       }
     },
 
     mounted() {
+      this.fetchNotifications();
       this.fetchAppointments();
+      this.timer = setInterval(this.fetchNotifications, 10000);
+    },
+    beforeUnmount() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     },
     components: {
       FontAwesomeIcon,
@@ -277,8 +305,10 @@
     setup() {
       const professionalName = ref('Dr. João Silva');
       const currUserData = ref([]);
+      const currAppointmentId = ref('');
       const isSidebarHidden = ref(false);
       const selectedSection = ref('Pacientes');
+      const notifications = ref([]);
       const sessionData = ref({
       profession: '',
       maritalStatus: '',
@@ -425,19 +455,22 @@
       };
 
       return {
+        currAppointmentId,
         professionalName,
         isSidebarHidden,
         toggleSidebar,
         patients,
         selectedPatient,
-        //showPatientRecord,
+        // showPatientRecord,
         selectedSection,
         selectSection,
         sessionData,
         sessionFields,
         saveSession,
         complaintHistoryFields,
-        childhoodFields
+        childhoodFields,
+        currUserData,
+        notifications
       };
     }
   }

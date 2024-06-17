@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Userdata;
+use App\Models\Appointment;
 use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
@@ -100,6 +101,14 @@ class UsersTableSeeder extends Seeder
             'uf' => 'SP',
             'role' => 'admin'
         ]);
+        Appointment::create([
+            'patient' => 2,
+            'medic' => 3,
+            'time' => '2024-06-01 10:00',
+            'observations' => 'Paciente vem evoluindo muito bem',
+            'done' => 1
+        ]);
+
         // // Adicionar mais usuários conforme necessário
         // for ($i = 0; $i < 10; $i++) {
         //     User::create([

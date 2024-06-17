@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('medic');
             $table->timestamp('time');
             $table->boolean('done')->default(false);
+            $table->text('observations')->nullable();
             $table->timestamps();
         });
     }

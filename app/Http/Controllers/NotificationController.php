@@ -7,11 +7,11 @@ use App\Models\Notification;
 
 class NotificationController extends Controller
 {
-    public function notify(Request $request) {
+    public function notify($id) {
         $notification = Notification::create([
-            'psicologo' => $request->psicologo,
-            'consulta' => $request->consulta,
-            'message' => $request->message,
+            'psicologo' => $id,
+            'consulta' => 2,
+            'message' => 'Seu paciente chegou.',
         ]);
 
         return response()->json(['message' => 'Notificação enviada com sucesso.']);
@@ -25,7 +25,7 @@ class NotificationController extends Controller
     }
 
     public function markRead($id) {
-        $notification = Notification::find('', $id);
+        $notification = Notification::findOrFail($id);
         $notification->update(['read' => true]);
         return response()->json(['message'=> 'Notificação marcada como lida.']);
     }

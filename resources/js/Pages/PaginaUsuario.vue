@@ -25,16 +25,14 @@
               <tr>
                 <th>Profissional</th>
                 <th>Data</th>
-                <th>Horário</th>
                 <th>Anotações de Sessão</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="historico in paginatedHistorico" :key="historico.id">
-                <td>{{ historico.professional }}</td>
-                <td>{{ historico.date }}</td>
+              <tr v-for="historico in consultasPassadas" :key="historico.id">
+                <td>{{ historico.medic }}</td>
                 <td>{{ historico.time }}</td>
-                <td><button @click="fetchFutureAppointments">Ver Anotações</button></td>
+                <td><button @click="viewNotes(historico.observations)">Ver Anotações</button></td>
               </tr>
             </tbody>
           </table>
@@ -181,7 +179,13 @@
     mounted() {
       this.fetchProfessionals();
       this.fetchFutureAppointments();
+      this.timer = setInterval(this.fetchFutureAppointments, 5000);
       this.fetchPastAppointments();
+    },
+    beforeUnmount() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     },
     setup(props) {
       const currentSection = ref('historico');
@@ -303,19 +307,14 @@
 
       const verificarData = () => {
         erroData.value = ''; // Limpa mensagens de erro anteriores
-        console.log(data_selecionada.value);
         const dataEscolhida = new Date(data_selecionada.value);
         dataEscolhida.setHours(dataEscolhida.getHours() + 3);
         const hoje = new Date();
-        console.log('data selecionada:', dataEscolhida);
-        console.log('Hoje:',hoje);
         // todo -> resolver o tempo de ate 3 meses para marcar
 
         // Zera a hora para comparação apenas de data
         hoje.setHours(0, 0, 0, 0);
         dataEscolhida.setHours(0, 0, 0, 0);
-        console.log('pos data selecionada:', dataEscolhida);
-        console.log('pos Hoje:',hoje);
 
         const ano = dataEscolhida.getFullYear();
         const ano_atual = hoje.getFullYear();

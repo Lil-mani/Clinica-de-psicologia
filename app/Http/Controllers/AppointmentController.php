@@ -112,4 +112,15 @@ class AppointmentController extends Controller
             return response()->json(['message'=> 'Consulta não encontrada'],404);
         }
     }
+
+    public function setObservation($id,$observation) { // nao sei se esta funcionando 100%
+        try {
+            $appointment = Appointment::findOrFail($id);
+            $appointment->observations = $observation;
+            $appointment->save();
+            return response()->json(['message'=> 'Consulta atualizada.'],200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message'=> 'Consulta não encontrada'],404);
+        }
+    }
 }

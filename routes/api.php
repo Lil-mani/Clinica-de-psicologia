@@ -41,9 +41,9 @@ Route::get('/usuarios', [RegisteredUserController::class,'show']);
 Route::post('/records',[PatientRecordController::class,'store']);
 
 // Rotas de notificação; Usadas nas telas de Psicologo & Secretaria
-Route::post('/notify', [NotificationController::class,'notify']);
-Route::get('/notifications', [NotificationController::class,'show']);
-Route::post('/notifications', [NotificationController::class,'markRead']);
+Route::post('/notify/{id}', [NotificationController::class,'notify']);
+Route::get('/notifications/{id}', [NotificationController::class,'show']);
+Route::post('/notifications/{id}', [NotificationController::class,'markRead']);
 
 // rota utilizada para coletar a lista de psicologos atualmente cadastrada no banco de dados
 Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
