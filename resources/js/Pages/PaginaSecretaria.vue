@@ -23,18 +23,21 @@
         </button>
 
         <div v-if="selectedSection === 'Novos Contatos'">
-            <h2 class="section-title">Novos Contatos</h2>
-                <ul>
-                    <li v-for="contact in contacts" :key="contact.id">
-                        <div>
-                            <p><strong>Nome:</strong> {{ contact.name }} {{ contact.surname }}</p>
-                            <p><strong>Email:</strong> {{ contact.email }}</p>
-                            <p><strong>Mensagem:</strong> {{ contact.message }}</p>
-                            <button @click="showModal(contact)">Registrar como Usuário</button>
-                        </div>
-                    </li>
-                </ul>
-        </div>
+        <h2 class="section-title">Novos Contatos</h2>
+        <ul>
+            <li v-for="contact in contacts" :key="contact.id" class="contact-item">
+                <div class="contact-block">
+                    <!-- Conteúdo e botão no mesmo nível usando flexbox -->
+                    <div class="contact-content">
+                        <p><strong>Nome:</strong> {{ contact.name }} {{ contact.surname }}</p>
+                        <p><strong>Email:</strong> {{ contact.email }}</p>
+                        <p><strong>Mensagem:</strong> {{ contact.message }}</p>
+                    </div>
+                    <button @click="showModal(contact)" class="register-btn">Registrar como Usuário</button>
+                </div>
+            </li>
+        </ul>
+    </div>
 
         <div v-if="selectedSection === 'Consultas'" class="section">
           <h2>Consultas de hoje</h2>
@@ -48,42 +51,99 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="historico in consultas" :key="historico.id">
-                <td>{{ historico.nome }}</td>
-                <td>{{ historico.time }}</td>
-                <td><button @click="notificar(historico.medic)">Notificar profissional</button></td>
+              <tr v-for="consultaHoje in consultas" :key="consultaHoje.id">
+                <td>{{ consultaHoje.nome }}</td>
+                <td>{{ consultaHoje.time }}</td>
+                <td><button @click="notificar(consultaHoje.medic,consultaHoje)">Notificar profissional</button></td>
               </tr>
             </tbody>
           </table>
         </div>
         <!-- Modal -->
-    <div v-if="modalVisible" class="modal">
-      <form @submit.prevent="submit">
+        <div v-if="modalVisible" class="modal">
+    <form @submit.prevent="submit" class="modal-form">
+      <!-- Grupo de Informações Pessoais -->
+      <fieldset>
+        <legend>Informações Pessoais</legend>
         <div class="form-row">
-            <input type="text" v-model="form.name" placeholder="Nome" />
-            <input type="text" v-model="form.surname" placeholder="Sobrenome" />
-            </div>
-            <input type="email" v-model="form.email" placeholder="Email" />
-            <input type="password" v-model="form.password" placeholder="Senha" />
-            <input type="password" v-model="form.password_confirmation" placeholder="Confirmar Senha" />
-            <input type="text" v-model="form.cpf" placeholder="CPF" />
-            <input type="text" v-model="form.telefone" placeholder="Telefone" />
-            <input type="date" v-model="form.dob" placeholder="Data de Nascimento" />
-            <input type="text" v-model="form.cep" placeholder="CEP" @blur="fetchAddress" />
-            <input type="text" v-model="form.logradouro" placeholder="Logradouro" />
-            <input type="text" v-model="form.complemento" placeholder="Complemento" />
-            <input type="text" v-model="form.bairro" placeholder="Bairro" />
-            <input type="text" v-model="form.localidade" placeholder="Localidade" />
-            <input type="text" v-model="form.uf" placeholder="UF" />
-        <div class="flex items-center justify-end mt-4">
-          <button type="button" @click="modalVisible = false">Close</button>
-          <!-- <button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-            Register
-          </button> -->
-          <button type="submit">Register</button>
+          <div class="form-column">
+            <label for="name">Nome:</label>
+            <input id="name" type="text" v-model="form.name" placeholder="Seu nome" required />
+          </div>
+          <div class="form-column">
+            <label for="surname">Sobrenome:</label>
+            <input id="surname" type="text" v-model="form.surname" placeholder="Seu sobrenome" required />
+          </div>
         </div>
-      </form>
-    </div>
+        <div class="form-row">
+          <div class="form-column">
+            <label for="dob">Data de Nascimento:</label>
+            <input id="dob" type="date" v-model="form.dob" required />
+          </div>
+          <div class="form-column">
+            <label for="telefone">Telefone:</label>
+            <input id="telefone" type="text" v-model="form.telefone" placeholder="(xx) xxxx-xxxx" />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Grupo de Endereço -->
+      <fieldset>
+        <legend>Endereço</legend>
+        <div class="form-row">
+          <div class="form-column">
+            <label for="cep">CEP:</label>
+            <input id="cep" type="text" v-model="form.cep" placeholder="00000-000" @blur="fetchAddress" required />
+          </div>
+          <div class="form-column">
+            <label for="logradouro">Logradouro:</label>
+            <input id="logradouro" type="text" v-model="form.logradouro" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-column">
+            <label for="bairro">Bairro:</label>
+            <input id="bairro" type="text" v-model="form.bairro" required />
+          </div>
+          <div class="form-column">
+            <label for="localidade">Localidade:</label>
+            <input id="localidade" type="text" v-model="form.localidade" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-column">
+            <label for="uf">UF:</label>
+            <input id="uf" type="text" v-model="form.uf" required />
+          </div>
+          <div class="form-column">
+            <label for="complemento">Complemento:</label>
+            <input id="complemento" type="text" v-model="form.complemento" />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Grupo de Senha -->
+      <fieldset>
+        <legend>Credenciais</legend>
+        <div class="form-row">
+          <div class="form-column">
+            <label for="password">Senha:</label>
+            <input id="password" type="password" v-model="form.password" placeholder="Crie uma senha" required />
+          </div>
+          <div class="form-column">
+            <label for="password_confirmation">Confirmar Senha:</label>
+            <input id="password_confirmation" type="password" v-model="form.password_confirmation" placeholder="Confirme a senha" required />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Botões de Ação -->
+      <div class="flex items-center justify-between mt-4">
+        <button type="button" class="modal-close" @click="modalVisible = false">Fechar</button>
+        <button type="submit" class="modal-submit">Registrar</button>
+      </div>
+    </form>
+  </div>
         </div>
       </div>
   </template>
@@ -127,10 +187,11 @@
         logout() {
             this.$inertia.post('/logout');
         },
-        async notificar(id) {
+        async notificar(id,consulta) {
             try {
-                const response = await axios.post(`/api/notify/${id}`);
-                alert(response.data.message);
+                console.log(consulta);
+                // const response = await axios.post(`/api/notify/${id}`,consulta);
+                // alert(response.data.message);
             } catch (error) {
                 console.log('Erro ao notificar:',error);
             }
@@ -145,6 +206,22 @@
             }
         },
         showModal(contacto) {
+            this.form = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        cpf: '',
+        telefone: '',
+        dob: '',
+        cep: '',
+        logradouro: '',
+        complemento: '',
+        bairro: '',
+        localidade: '',
+        uf: '',
+        role: 'usuario'
+        });
             this.form.email = contacto.email; // Pré-popular o campo de e-mail, se desejado
             this.form.name = contacto.name;
             this.form.surname = contacto.surname;
@@ -170,7 +247,6 @@
                 console.log('Erro ao adquirir consultas:', error);
             }
         }
-
     },
     mounted() {
         this.fetchAppointments();
@@ -271,7 +347,16 @@
             console.error('Failed to fetch contacts:', error);
         }
     };
+       const sendUserInfo = async () => {
+            try {
+                const response = await axios.put('/api/mail/userInfo', form);
+                console.log(response);
+            } catch (error) {
+                console.log('Erro ao mandar email com os dados de login para o usuário:',error);
+            }
+        };
     const submit = () => {
+        sendUserInfo();
             form.post(route('register'), {
                 onSuccess: () => {
                     resetForm();  // Chama a função de reset após o sucesso na submissão
@@ -298,7 +383,8 @@
         submit,
         contact,
         resetForm,
-        deleteContact
+        deleteContact,
+        sendUserInfo
       };
     }
   }
@@ -505,20 +591,6 @@
   .download-button:hover {
     background-color: #333640;
   }
-  .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  z-index: 1000;
-  width: 90%;  /* Ajuste a largura conforme necessário */
-  max-width: 600px;  /* Garante que o modal não fique muito largo em telas grandes */
-  overflow: auto;  /* Garante que todo o conteúdo seja rolável se exceder a altura da viewport */
-  border-radius: 8px;  /* Cantos arredondados para um visual mais suave */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);  /* Sombra sutil para profundidade */
-}
 .section {
     margin-bottom: 40px;
   }
@@ -533,4 +605,127 @@
     font-size: 18px; /* Aumenta o tamanho do texto abaixo do título */
     color: #474A59; /* Define a cor do texto */
   }
+
+  .contact-item {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+.contact-block {
+    background-color: #f9f9f9;
+    border: 1px solid #e2e2e2;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px;
+    display: flex; /* Aplica flexbox */
+    align-items: center; /* Alinha verticalmente */
+    justify-content: space-between; /* Espaçamento entre conteúdo e botão */
+}
+
+.contact-content {
+    flex: 1; /* Ocupa todo espaço disponível exceto o necessário para o botão */
+}
+
+.register-btn {
+    background-color: #474a59 ; /* Cor personalizada para o botão */
+    color: #89ffdb; /* Cor do texto no botão para contraste */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.register-btn:hover {
+    background-color: #4e9489; /* Cor mais escura ao passar o mouse */
+}
+
+.modal {
+  background-color: #474a59;
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  max-width: 800px;
+  z-index: 1050;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+}
+
+.modal-form {
+  display: grid;
+  grid-gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-column {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.form-column:last-child {
+  margin-right: 0;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+}
+
+legend {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #000; /* Cor do texto preto para garantir legibilidade */
+}
+
+.modal-close, .modal-submit {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-close {
+  background-color: #ccc;
+  color: #333;
+}
+
+.modal-close:hover {
+  background-color: #bbb;
+}
+
+.modal-submit {
+  background-color: #89ffdb;
+  color: #333;
+}
+
+.modal-submit:hover {
+  background-color: #76e4d4;
+}
   </style>

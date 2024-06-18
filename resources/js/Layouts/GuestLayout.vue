@@ -4,10 +4,11 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-900">
         <div>
-            <Link href="/">
-                <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
+            <!-- Estilo inline para aumentar o tamanho da fonte -->
+            <Link href="/" class="text-white" style="font-size: 60px;">
+                Instituto <span style="color: #89ffdb;">Psi</span>
             </Link>
         </div>
 
@@ -18,3 +19,9 @@ import { Link } from '@inertiajs/vue3';
         </div>
     </div>
 </template>
+
+<style>
+.bg-gray-900 {
+    background-color: #474a59; /* Cor de fundo alterada */
+}
+</style>

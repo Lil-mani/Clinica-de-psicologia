@@ -55,3 +55,4 @@ Route::post('/notifications/{id}', [NotificationController::class,'markRead']);
 Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
 
 Route::put('/mail', [mailController::class, 'sendEmail']);
+Route::put('/mail/userInfo', [mailController::class,'sendLoginInfo']);

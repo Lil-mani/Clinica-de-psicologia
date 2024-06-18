@@ -36,11 +36,6 @@
               </tr>
             </tbody>
           </table>
-          <div class="pagination">
-            <button @click="prevHistoricoPage" :disabled="historicoPage === 1">Anterior</button>
-            <span>Página {{ historicoPage }} de {{ totalHistoricoPages }}</span>
-            <button @click="nextHistoricoPage" :disabled="historicoPage === totalHistoricoPages">Próxima</button>
-          </div>
         </div>
 
         <!-- Modal -->
@@ -67,11 +62,6 @@
               <button @click="showPopup(professional)" class="agendamento-button">Agendamento</button>
             </li>
           </ul>
-          <div class="pagination">
-            <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
-            <span>Página {{ currentPage }} de {{ totalPages }}</span>
-            <button @click="nextPage" :disabled="currentPage === totalPages">Próxima</button>
-          </div>
         </div>
 
         <div v-if="currentSection === 'consultas'" class="section">
@@ -93,11 +83,6 @@
               </tr>
             </tbody>
           </table>
-          <div class="pagination">
-            <button @click="prevHistoricoPage" :disabled="historicoPage === 1">Anterior</button>
-            <span>Página {{ historicoPage }} de {{ totalHistoricoPages }}</span>
-            <button @click="nextHistoricoPage" :disabled="historicoPage === totalHistoricoPages">Próxima</button>
-          </div>
         </div>
       </div>
 
@@ -125,6 +110,7 @@
           <button class="confirmar-button" @click="combinarDateTime(data_selecionada)">Confirmar</button>
         </div>
       </div>
+
     </div>
   </template>
 
@@ -158,7 +144,7 @@
             // coleta a lista de psicologos e a atribui para professionals.
           const response = await axios.get('/api/psychologists');
           this.professionals = response.data;
-        //   console.log(response);
+          console.log('oi ',response.data.psicologo);
         //   console.log(this.professionals);
         //   console.log(this.professionals.name)
       } catch (error) {
@@ -244,6 +230,7 @@
         if (!searchQuery.value) {
           return professionals.value;
         }
+        console.log(professionals.value);
         return professionals.value.filter(professional =>
           professional.name.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
@@ -299,15 +286,16 @@
       const selectedProfessional = ref(null);
 
       const showPopup = (professional) => {
+        console.log(professionals.value.length);
         selectedProfessional.value = professional;
         appointment.value.medic = professional.id;
-        console.log(appointment.value);
+        // console.log(appointment.value);
         // limpa as variaveis de horario, data e a mensagem de erro.
         horario_selecionado.value = "";
         data_selecionada.value = "";
         erroData.value = "";
 
-        console.log(selectedProfessional.value)
+        // console.log(selectedProfessional.value)
         popupVisible.value = true;
       };
 
@@ -624,27 +612,6 @@
     cursor: not-allowed;
   }
 
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    z-index: 1001; /* Valor acima do z-index da navbar */
-    border-radius: 10px;
-    width: 90%;
-    max-width: 400px;
-  }
-
-  .popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-
   .popup-header-left {
     display: flex;
     align-items: center;
@@ -663,74 +630,6 @@
     justify-content: center;
     margin-right: 15px;
   }
-
-  .popup-header-text h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
-  }
-
-  .popup-header-text p {
-    margin: 0;
-    color: #666;
-  }
-
-  .close-button {
-    background-color: transparent;
-    border: none;
-    color: #666;
-    font-size: 20px;
-    cursor: pointer;
-  }
-
-  .popup-content {
-    text-align: center;
-    padding: 20px;
-  }
-
-  .date-picker {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-
-  .horarios {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .horario-button {
-    padding: 10px 20px;
-    background-color: #89ffdb;
-    color: #474a59;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .horario-button:hover {
-    background-color: #74ccbe;
-  }
-
-  .confirmar-button {
-    padding: 10px 20px;
-    margin-top: 20px;
-    background-color: #474a59;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .confirmar-button:hover {
-    background-color: #333640;
-  }
-
   .section {
     margin-bottom: 40px;
   }
@@ -797,6 +696,98 @@
   float: right;
   cursor: pointer;
   font-size: 28px;
+}
+
+.popup {
+  background-color: #ffffff; /* Fundo branco para contraste */
+  color: #474a59; /* Texto cinza escuro para leitura fácil */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.popup-header-text h3 {
+  margin: 0;
+  font-size: 1.5em;
+  color: #474a59; /* Mantendo a cor cinza escuro para cabeçalho */
+}
+
+.close-button {
+  padding: 5px 10px;
+  font-size: 0.9em;
+  background-color: #474a59; /* Fundo cinza escuro */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #363945; /* Um tom mais escuro de cinza */
+}
+
+.popup-content h2,
+.popup-content h3 {
+  color: #474a59; /* Texto cinza escuro */
+  margin: 10px 0;
+}
+
+.date-picker {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.horarios {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.horario-button {
+  flex: 1 0 30%; /* Ajuste para três botões por linha */
+  padding: 10px;
+  background-color: #89ffdb; /* Fundo verde água claro */
+  color: #474a59; /* Texto cinza escuro */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.horario-button:hover {
+  background-color: #76e4d4; /* Um tom mais escuro do verde água */
+}
+
+.confirmar-button {
+  padding: 10px 20px;
+  width: 100%;
+  background-color: #474a59; /* Fundo verde água claro */
+  color: #ffffff; /* Texto cinza escuro */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.confirmar-button:hover {
+  background-color: #488179; /* Um tom mais escuro do verde água */
 }
 
   </style>

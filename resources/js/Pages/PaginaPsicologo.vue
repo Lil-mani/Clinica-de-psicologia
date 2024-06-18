@@ -37,13 +37,13 @@
           <ul class="patients-list">
             <li v-for="patient in patients" :key="patient.id" class="patient-item">
               <div v-if=" patient.done === 0 "class="info">
-                <p class="appointment-time">{{ patient.time }}</p>
+                <p class="appointment-time">{{ patient.patientName }} {{ patient.time }}</p>
               </div>
               <button @click="showPatientRecord(patient,patient.patient,patient.id)" class="record-button">Ficha</button>
             </li>
           </ul>
 
-          <div v-if="currUserData" class="patient-record">
+          <div v-if="showForms" class="patient-record">
             <h3>Ficha do Paciente</h3>
              <div class="form-row">
               <label>Nome Completo: {{ currUserData.name }}</label>
@@ -236,12 +236,25 @@
       async fetchUserData() {
           try {
               const response = await axios.get(`/api/usuarios/${this.selectedPatient}`); // Ajuste a URL conforme a rota correta
-              console.log(response.data);
+            //   console.log(response.data);
               this.currUserData = response.data;
-              console.log(this.selectedPatient)
-              console.log(this.currUserData)
+            //   console.log(this.selectedPatient)
+            //   console.log(this.currUserData)
           } catch (error) {
               console.error('Erro ao recuperar os dados:', error);
+          }
+      }
+      ,
+      async fetchThisUserData(id) {
+          try {
+              const response = await axios.get(`/api/usuarios/${id}`); // Ajuste a URL conforme a rota correta
+            //   console.log(response.data);
+            const dados = response.data;
+            const nome = dados.name;
+            return nome;
+          } catch (error) {
+              console.error('Erro ao recuperar os dados:', error);
+              return '';
           }
       }
       ,
@@ -263,6 +276,7 @@
           const response = await axios.put(`/api/records/${this.selectedPatient}`, this.sessionData);
           console.log(response.data);
           this.setObservations();
+          this.showForms = '';
           alert('Ficha salva com sucesso');
         } catch (error) {
           console.log('Erro ao salvar a ficha da consulta:', error);
@@ -280,18 +294,37 @@
       }
       ,
       async fetchAppointments() {
-      try {
-        console.log(`/api/appointments/today/${this.userid}`);
-        const response = await axios.get(`/api/appointments/today/${this.userid}`);
-        this.consultations = response.data;
-        console.log(this.consultations);
-        this.patients = this.consultations.filter(consultation => {
-          return consultation.medic == this.userid;
-        });
-        console.log(this.patients);
-      } catch (error) {
-        console.error('Erro ao recuperar as consultas:', error);
-      }
+        try {
+            // console.log(`/api/appointments/today/${this.userid}`);
+            const response = await axios.get(`/api/appointments/today/${this.userid}`);
+            this.consultations = response.data;
+            // console.log(this.consultations);
+
+            // Filtrar consultas do médico específico
+            const medicConsultations = this.consultations.filter(consultation => consultation.medic == this.userid);
+
+            // Criar uma lista de promessas para cada consulta, para buscar o nome do paciente
+            const patientNamesPromises = medicConsultations.map(async consultation => {
+                const patientName = await this.fetchThisUserData(consultation.patient);
+                consultation.time = this.extractTime(consultation.time);
+                return { ...consultation, patientName };  // Adicionar o nome do paciente ao objeto da consulta
+            });
+
+            // Resolver todas as promessas para obter a lista final de pacientes com os nomes
+            this.patients = await Promise.all(patientNamesPromises);
+            console.log(this.patients);
+
+        } catch (error) {
+            console.error('Erro ao recuperar as consultas:', error);
+        }
+    }
+    ,
+    extractTime(dateTime) {
+    // O parâmetro dateTime é uma string no formato "yyyy-mm-dd hh-mm"
+    // Esta função irá dividir essa string pelo espaço e retornar a parte do tempo
+    const timePart = dateTime.split(' ')[1]; // Divide a string pelo espaço e pega o segundo elemento
+    const timeComponents = timePart.split(':'); // Divide a parte do tempo por '-'
+    return `${timeComponents[0]}:${timeComponents[1]}`;
     }
     ,
     async setObservations() {
@@ -310,11 +343,16 @@
     }
     ,
     showPatientRecord (appointment,patient, id) {
+        if (this.showForms) {
+            this.showForms = '';
+        } else {
+        this.showForms = 'sim';
         this.currAppointment = appointment;
         this.selectedPatient = patient;
         this.currAppointmentId = id;
         this.fetchUserData();
         this.fetchUserRecord();
+        }
       }
     },
 
@@ -335,6 +373,7 @@
     setup() {
       const professionalName = ref('Dr. João Silva');
       const currUserData = ref([]);
+      const showForms = ref();
       const currAppointment = ref();
       const currAppointmentId = ref('');
       const isSidebarHidden = ref(false);
@@ -420,7 +459,8 @@
         childhoodFields,
         currUserData,
         notifications,
-        currAppointment
+        currAppointment,
+        showForms
       };
     }
   }
