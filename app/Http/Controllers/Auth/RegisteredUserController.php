@@ -156,6 +156,16 @@ class RegisteredUserController extends Controller
         return response()->json($profissionaisTransformados);
     }
 
+    public function getUsers() {
+        $users = Userdata::where('role','usuario')->pluck('id','name');
+
+        $usersTransformados = $users->map(function ($id, $nome) {
+            return ['name' => $nome, 'id' => $id];
+        });
+        return response()->json($usersTransformados);
+
+    }
+
     /**
      * Função puxa o nome do usuario de id fornecido.
      */

@@ -8,7 +8,7 @@ use App\Models\Notification;
 class NotificationController extends Controller
 {
     public function notify(Request $request,$id) {
-        $id_consulta = $request->id;
+        $id_consulta = $request->nomePaciente;
         $notification = Notification::create([
             'psicologo' => $id,
             'consulta' => $id_consulta,

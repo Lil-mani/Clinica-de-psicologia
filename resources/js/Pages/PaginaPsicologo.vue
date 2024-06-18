@@ -12,6 +12,7 @@
           <ul>
             <li @click="selectSection('Pacientes')" :class="{ active: selectedSection === 'Pacientes' }">Pacientes de Hoje</li>
             <li @click="selectSection('Documentos')" :class="{ active: selectedSection === 'Documentos' }">Documentos</li>
+            <li @click="selectSection('Fichas')" :class="{ active: selectedSection === 'Fichas' }">Fichas</li>
             <li @click="selectSection('Notificacoes')" :class="{ active: selectedSection === 'Notificacoes' }">Notificações</li>
             <li @click="logout">Sair</li>
           </ul>
@@ -22,12 +23,167 @@
         <button @click="toggleSidebar" class="toggle-button">
           <font-awesome-icon :icon="[isSidebarHidden ? 'arrow-right' : 'arrow-left']" />
         </button>
+
+        <div v-if="selectedSection === 'Fichas'">
+          <h2 class="section-title">Pacientes</h2>
+          <ul class="patients-list">
+            <li v-for="patient in allPatients" :key="patient.id" class="patient-item">
+              <div class="info">
+                <p class="appointment-time">{{ patient.name }}</p>
+              </div>
+              <button @click="showPatientRecord(patient,patient.id,patient.id)" class="record-button">Ficha</button>
+            </li>
+          </ul>
+          <div v-if="showForms" class="patient-record">
+            <h3>Ficha do Paciente</h3>
+             <div class="form-row">
+              <label>Nome Completo: {{ currUserData.name }}</label>
+              <!-- <p></p> -->
+              <label>Email: {{ currUserData.email }}</label>
+              <!-- <p></p> -->
+            </div>
+            <div class="form-row">
+              <label>CPF:</label>
+              <p>{{ currUserData.cpf }}</p>
+              <label>Telefone:</label>
+              <p>{{ currUserData.telefone }}</p>
+            </div>
+            <div class="form-row">
+              <label>Data de Nascimento:</label>
+              <p>{{ currUserData.dob }}</p>
+              <label>CEP:</label>
+              <p>{{ currUserData.cep }}</p>
+            </div>
+            <div class="form-row">
+              <label>Logradouro:</label>
+              <p>{{ currUserData.logradouro }}</p>
+              <label>Complemento:</label>
+              <p>{{ currUserData.complemento }}</p>
+            </div>
+            <div class="form-row">
+              <label>Bairro:</label>
+              <p>{{ currUserData.bairro }}</p>
+              <label>Cidade:</label>
+              <p>{{ currUserData.localidade }}</p>
+            </div>
+            <div class="form-row">
+              <label>UF:</label>
+              <p>{{ currUserData.uf }}</p>
+            </div>
+
+            <h3>Informações de Sessão</h3>
+            <div class="session-info">
+            <div class="form-row" v-for="field in sessionFields" :key="field.key">
+                <label>{{ field.label }}:</label>
+                <p>{{ sessionData[field.key] }}</p> <!-- Dados exibidos em texto estático -->
+            </div>
+
+              <h3>Histórico da Queixa</h3>
+              <div class="form-row" v-for="field in complaintHistoryFields" :key="field.key">
+                <label>{{ field.label }}</label>
+                <p>{{sessionData[field.key]}}</p>
+              </div>
+              <h3>Infância</h3>
+              <div class="form-row" v-for="field in childhoodFields" :key="field.key">
+                <label>{{ field.label }}</label>
+                <p>{{sessionData[field.key]}}</p>
+              </div>
+              <!-- Adolescência -->
+              <h3>Adolescência</h3>
+              <div class="session-info">
+                <div class="form-row">
+                  <label>Experiências afetivas marcantes</label>
+                  <p>{{ sessionData.affectionate_experiences }}</p>
+                </div>
+                <div class="form-row">
+                  <label>Experiências sexuais marcantes</label>
+                  <p>{{sessionData.sexual_experiences}}</p>
+                </div>
+                <div class="form-row">
+                  <label>Independência / Primeiros empregos</label>
+                  <p>{{sessionData.first_jobs}}</p>
+                </div>
+                <div class="form-row">
+                  <label>Círculos de amizade</label>
+                  <p>{{sessionData.friendship_circles}}</p>
+                </div>
+              </div>
+
+              <!-- Vida Adulta -->
+              <h3>Vida Adulta</h3>
+                <div class="session-info">
+                <div class="form-row">
+                    <label>Relacionamentos com parceiro:</label>
+                    <p>{{ sessionData.partner_relationships }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Vida sexual atual:</label>
+                    <p>{{ sessionData.current_sex_life }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Situação financeira:</label>
+                    <p>{{ sessionData.financial_situation }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Abortos espontâneos/provocados:</label>
+                    <p>{{ sessionData.abortions }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Apoio social disponível:</label>
+                    <p>{{ sessionData.social_support }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Outros transtornos atuais (sono, alimentação, tiques, etc.):</label>
+                    <p>{{ sessionData.current_disorders }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Principais lazeres:</label>
+                    <p>{{ sessionData.main_leisure_activities }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Vida social:</label>
+                    <p>{{ sessionData.social_life }}</p>
+                </div>
+                </div>
+
+              <!-- Observações -->
+              <h3>Observações</h3>
+                <div class="session-info">
+                <div class="form-row">
+                    <label>Observação geral:</label>
+                    <p>{{ sessionData.general_observation }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Linguagem não verbal do paciente:</label>
+                    <p>{{ sessionData.non_verbal_language }}</p>
+                </div>
+                </div>
+
+                <h3>Atendimentos Prestados</h3>
+                <div class="session-info">
+                <div class="form-row">
+                    <label>Profissional:</label>
+                    <p>{{ sessionData.professional }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Encaminhamentos feitos:</label>
+                    <p>{{ sessionData.referrals_made }}</p>
+                </div>
+                <div class="form-row">
+                    <label>Terapêutica utilizada (prescrição de exercícios, leituras, relacionamento, etc.):</label>
+                    <p>{{ sessionData.therapeutics_used }}</p>
+                </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
         <!-- Adicionando a seção de notificações -->
         <div v-if="selectedSection === 'Notificacoes'">
             <h2 class="section-title">Notificações</h2>
             <ul class="notification-list">
               <li v-for="notification in notifications" :key="notification.id" :class="{ unread: !notification.read }">
-                {{ notification.message }}
+                {{ notification.message }} {{ notification.consulta }}
                 <button @click="markNotificationAsRead(notification.id)">Marcar como lida</button>
               </li>
             </ul>
@@ -193,7 +349,8 @@
             <h2 class="section-title">Documentos</h2>
             <p>Aqui você pode visualizar e gerenciar seus documentos.</p>
             <DocumentEditor />
-          </div>
+        </div>
+
         </div>
       </div>
   </template>
@@ -342,6 +499,17 @@
         }
     }
     ,
+    async fetchUsers() {
+        try {
+            const response = await axios.get('/api/users');
+            this.allPatients = response.data;
+            console.log(this.allPatients);
+        } catch (error) {
+            console.log('Erro ao coletar os dados dos usuários na ficha:', error);
+        }
+    }
+    ,
+
     showPatientRecord (appointment,patient, id) {
         if (this.showForms) {
             this.showForms = '';
@@ -359,6 +527,7 @@
     mounted() {
       this.fetchNotifications();
       this.fetchAppointments();
+      this.fetchUsers();
       this.timer = setInterval(this.fetchNotifications, 10000);
     },
     beforeUnmount() {
@@ -380,6 +549,7 @@
       const selectedSection = ref('Pacientes');
       const notifications = ref([]);
       const sessionData = ref({});
+      const allPatients = ref([]);
 
       const sessionFields = ref([
         { key: 'profession', label: 'Profissão' },
@@ -433,6 +603,7 @@
 
       const selectSection = (section) => {
         selectedSection.value = section;
+        showForms.value = null;
         selectedPatient.value = null; // Clear selected patient when switching sections
       };
 
@@ -460,7 +631,8 @@
         currUserData,
         notifications,
         currAppointment,
-        showForms
+        showForms,
+        allPatients
       };
     }
   }

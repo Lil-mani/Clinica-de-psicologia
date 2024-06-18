@@ -53,6 +53,8 @@ Route::post('/notifications/{id}', [NotificationController::class,'markRead']);
 
 // rota utilizada para coletar a lista de psicologos atualmente cadastrada no banco de dados
 Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
+Route::get('/users', [RegisteredUserController::class, 'getUsers']);
+
 
 Route::put('/mail', [mailController::class, 'sendEmail']);
 Route::put('/mail/userInfo', [mailController::class,'sendLoginInfo']);

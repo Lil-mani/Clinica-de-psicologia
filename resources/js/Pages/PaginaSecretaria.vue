@@ -85,6 +85,12 @@
             <input id="telefone" type="text" v-model="form.telefone" placeholder="(xx) xxxx-xxxx" />
           </div>
         </div>
+        <div class="form-row">
+        <div class="form-column">
+            <label for="cpf">CPF:</label>
+            <input id="cpf" type="text" v-model="form.cpf" placeholder="000.000.000-00" required />
+        </div>
+        </div>
       </fieldset>
 
       <!-- Grupo de Endereço -->
@@ -189,9 +195,10 @@
         },
         async notificar(id,consulta) {
             try {
-                console.log(consulta);
-                // const response = await axios.post(`/api/notify/${id}`,consulta);
-                // alert(response.data.message);
+                const nome = await this.getName(consulta.patient);
+                consulta.nomePaciente = nome;
+                const response = await axios.post(`/api/notify/${id}`,consulta);
+                alert(response.data.message);
             } catch (error) {
                 console.log('Erro ao notificar:',error);
             }
@@ -206,22 +213,22 @@
             }
         },
         showModal(contacto) {
-            this.form = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        cpf: '',
-        telefone: '',
-        dob: '',
-        cep: '',
-        logradouro: '',
-        complemento: '',
-        bairro: '',
-        localidade: '',
-        uf: '',
-        role: 'usuario'
-        });
+            // this.form = useForm({
+            //     name: '',
+            //     email: '',
+            //     password: '',
+            //     password_confirmation: '',
+            //     cpf: '',
+            //     telefone: '',
+            //     dob: '',
+            //     cep: '',
+            //     logradouro: '',
+            //     complemento: '',
+            //     bairro: '',
+            //     localidade: '',
+            //     uf: '',
+            //     role: 'usuario'
+            //     });
             this.form.email = contacto.email; // Pré-popular o campo de e-mail, se desejado
             this.form.name = contacto.name;
             this.form.surname = contacto.surname;
@@ -356,7 +363,7 @@
             }
         };
     const submit = () => {
-        sendUserInfo();
+            sendUserInfo();
             form.post(route('register'), {
                 onSuccess: () => {
                     resetForm();  // Chama a função de reset após o sucesso na submissão
