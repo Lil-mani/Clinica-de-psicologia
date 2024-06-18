@@ -1,5 +1,3 @@
-Claro, aqui está o README atualizado com todos os passos necessários:
-
 ```markdown
 # Laravel Template
 
