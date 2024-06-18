@@ -42,6 +42,12 @@ Gerar a key do projeto Laravel
 php artisan key:generate
 ```
 
+Criar tabelas do banco de dados e dados pre-preenchidos
+```sh
+php artisan migrate
+php artisan db:seed
+```
+
 Sair do terminal do docker
 ```sh
 exit
@@ -57,6 +63,4 @@ npm run dev
 Acesse o projeto
 [http://localhost:8080](http://localhost:8080)
 
-Acesse o phpmyadmin
-[http://localhost:8081](http://localhost:8081)
 
