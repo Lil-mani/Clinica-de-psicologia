@@ -174,4 +174,3 @@ npm run start
 Acesse o projeto em [http://localhost:8080](http://localhost:8080)
 ```
 link do trello: https://trello.com/b/ctQdbn6l
-link para a documentação:
