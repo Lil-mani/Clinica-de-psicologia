@@ -1,0 +1,139 @@
+### Estrutura Detalhada das Sprints com Reuniões e Distribuição de Tarefas
+
+#### Sprint 1: Reunião de Planejamento
+
+##### Objetivo:
+Definir tarefas iniciais focadas em CRUD básico, montagem da landing page, familiarização com Breeze, e estruturação do projeto.
+
+##### Tarefas:
+
+1. *CRUD Básico do Administrador*
+   - *Luiz (Banco de Dados):*
+     - Criar tabelas no banco de dados para psicólogo, cliente e secretária.
+     - Implementar operações CRUD no back-end.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade CRUD para cada entidade.
+   - *Amanda (Front-end):*
+     - Criar formulários e interfaces para CRUD de psicólogo, cliente e secretária.
+
+2. *Montagem da Landing Page*
+   - *Amanda (Front-end):*
+     - Implementar seção "Sobre Nós".
+     - Adicionar depoimentos.
+     - Criar área para contatos.
+     - Montar o formulário de contato inicial.
+   - *Lucas (Testes):*
+     - Testar funcionalidades e layout da landing page.
+
+3. *Familiarização com Breeze*
+   - *Amanda (Front-end):*
+     - Implementar login e autenticação na landing page usando Breeze.
+   - *Lucas (Testes):*
+     - Testar funcionalidade de login e autenticação.
+
+4. *Estruturação do Projeto*
+   - *Todos:*
+     - Definir e estruturar as páginas iniciais do projeto.
+   - *Lucas (Testes):*
+     - Verificar o funcionamento das rotas de cada página.
+
+#### Sprint 2: Reunião de Planejamento
+
+##### Objetivo:
+Implementar cadastro, telas de usuários, funções do banco de dados, e back-end de login.
+
+##### Tarefas:
+
+1. *Cadastro utilizando Breeze e API de CEP*
+   - *Amanda (Front-end):*
+     - Desenvolver a interface de cadastro utilizando Breeze.
+   - *Luiz (Banco de Dados):*
+     - Integrar a API de CEP e armazenar os dados no banco.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade de cadastro e integração da API de CEP.
+
+2. *Implementação das Telas de Usuários*
+   - *Amanda (Front-end):*
+     - Criar páginas de histórico, agendamentos e agendamentos atuais.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade e navegação entre as telas de usuários.
+
+3. *Implementação de Funções do Banco de Dados*
+   - *Luiz (Banco de Dados):*
+     - Desenvolver funções para receber e armazenar informações do front-end.
+   - *Lucas (Testes):*
+     - Validar a correta recepção e armazenamento dos dados no banco.
+
+4. *Implementação do Back-End de Login*
+   - *Luiz (Banco de Dados):*
+     - Desenvolver o back-end para login de usuário, secretária e psicólogo.
+   - *Amanda (Front-end):*
+     - Criar interfaces de login.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade de login para todos os tipos de usuários.
+
+#### Sprint 3: Reunião de Planejamento
+
+##### Objetivo:
+Finalizar o cadastro, implementar funcionalidades do psicólogo, planejar notificações e testar o banco de dados.
+
+##### Tarefas:
+
+1. *Finalização do Cadastro com o Front da Secretária*
+   - *Amanda (Front-end):*
+     - Implementar a interface de finalização de cadastro para secretária.
+   - *Luiz (Banco de Dados):*
+     - Integrar as informações no banco.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade de finalização de cadastro.
+
+2. *Implementação do Psicólogo*
+   - *Amanda (Front-end):*
+     - Desenvolver a interface para visualizar pacientes do dia.
+   - *Luiz (Banco de Dados):*
+     - Implementar funções no back-end para listar pacientes do dia.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade de listagem de pacientes.
+
+3. *Planejamento de Notificações*
+   - *Todos:*
+     - Planejar o sistema de notificações.
+   - *Amanda (Front-end):*
+     - Desenvolver as interfaces de notificações.
+   - *Luiz (Banco de Dados):*
+     - Implementar o back-end para gerenciar notificações.
+   - *Lucas (Testes):*
+     - Testar a funcionalidade de notificações.
+
+4. *Teste do Banco de Dados*
+   - *Luiz (Banco de Dados):*
+     - Verificar a recepção correta das informações no banco.
+   - *Lucas (Testes):*
+     - Validar a integridade dos dados armazenados.
+
+#### Sprint 4: Reunião de Planejamento
+
+##### Objetivo:
+Deploy do projeto, testes finais do front-end, finalização da documentação e README.
+
+##### Tarefas:
+
+1. *Deploy do Projeto*
+   - *Luiz (Banco de Dados):*
+     - Configurar o container e integrar com Kubernetes.
+   - *Lucas (Testes):*
+     - Verificar a funcionalidade do sistema após o deploy.
+
+2. *Testes Finais do Front-End*
+   - *Amanda (Front-end):*
+     - Realizar testes finais de todas as funcionalidades.
+   - *Lucas (Testes):*
+     - Validar a usabilidade e funcionalidade do front-end.
+
+3. *Finalização da Documentação e README*
+   - *Todos:*
+     - Completar a documentação do projeto.
+   - *Amanda (Front-end):*
+     - Redigir o README com instruções de uso e instalação.
+   - *Lucas (Testes):*
+     - Revisar a documentação para garantir clareza e precisão.
