@@ -37,14 +37,14 @@
         </div>
 
         <div v-if="selectedSection === 'Consultas'" class="section">
-          <h2>Histórico de Consultas</h2>
-          <p>Aqui é possível ver suas sessões antigas!</p>
+          <h2>Consultas de hoje</h2>
+          <p>Aqui é possível ver as consultas marcadas para o dia de hoje!</p>
           <table class="historico-table">
             <thead>
               <tr>
                 <th>Profissional</th>
                 <th>Data</th>
-                <th>Anotações de Sessão</th>
+                <th>Notificar</th>
               </tr>
             </thead>
             <tbody>
@@ -144,11 +144,11 @@
                 return ''; // Retorna string vazia ou manipula o erro conforme necessário
             }
         },
-        showModal(contact) {
-            this.form.email = contact.email; // Pré-popular o campo de e-mail, se desejado
-            this.form.name = contact.name;
-            this.form.surname = contact.surname;
-            this.contact = contact.id;
+        showModal(contacto) {
+            this.form.email = contacto.email; // Pré-popular o campo de e-mail, se desejado
+            this.form.name = contacto.name;
+            this.form.surname = contacto.surname;
+            this.contact = contacto.id;
             this.modalVisible = true;
         },
         async fetchAppointments() {
@@ -229,6 +229,17 @@
         selectedSection.value = section;
         fetchContacts();
       };
+
+      const deleteContact = async () => {
+        try {
+            // console.log(`/api/contacts/${contact.value}`);
+            const response = await axios.post(`/api/contacts/${contact.value}`);
+            console.log(response.data);
+        } catch (error) {
+            console.log(response);
+        }
+      }
+
       // api de cep
       const fetchAddress = async () => {
         if (form.cep.length === 8) {
@@ -265,6 +276,8 @@
                 onSuccess: () => {
                     resetForm();  // Chama a função de reset após o sucesso na submissão
                     alert('Usuário registrado com sucesso!');
+                    deleteContact();
+                    fetchContacts();
                 },
                 onError: () => {
                     alert('Erro ao tentar registrar o usuário.');
@@ -284,7 +297,8 @@
         form,
         submit,
         contact,
-        resetForm
+        resetForm,
+        deleteContact
       };
     }
   }

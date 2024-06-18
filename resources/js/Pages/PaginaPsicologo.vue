@@ -39,7 +39,7 @@
               <div v-if=" patient.done === 0 "class="info">
                 <p class="appointment-time">{{ patient.time }}</p>
               </div>
-              <button @click="showPatientRecord(patient.patient,patient.id)" class="record-button">Ficha</button>
+              <button @click="showPatientRecord(patient,patient.patient,patient.id)" class="record-button">Ficha</button>
             </li>
           </ul>
 
@@ -101,19 +101,19 @@
               <div class="session-info">
                 <div class="form-row">
                   <label>Experiências afetivas marcantes</label>
-                  <textarea v-model="sessionData.affectionateExperiences" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.affectionate_experiences" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Experiências sexuais marcantes</label>
-                  <textarea v-model="sessionData.sexualExperiences" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.sexual_experiences" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Independência / Primeiros empregos</label>
-                  <textarea v-model="sessionData.firstJobs" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.first_jobs" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Círculos de amizade</label>
-                  <textarea v-model="sessionData.friendshipCircles" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.friendship_circles" rows="2" maxlength="500"></textarea>
                 </div>
               </div>
 
@@ -122,15 +122,15 @@
               <div class="session-info">
                 <div class="form-row">
                   <label>Relacionamentos com parceiro</label>
-                  <textarea v-model="sessionData.partnerRelationships" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.partner_relationships" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Vida sexual atual</label>
-                  <textarea v-model="sessionData.currentSexLife" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.current_sex_life" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Situação financeira</label>
-                  <textarea v-model="sessionData.financialSituation" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.financial_situation" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Abortos espontâneos/provocados</label>
@@ -138,19 +138,19 @@
                 </div>
                 <div class="form-row">
                   <label>Apoio social disponível</label>
-                  <textarea v-model="sessionData.socialSupport" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.social_support" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Outros transtornos atuais (sono, alimentação, tiques, etc.)</label>
-                  <textarea v-model="sessionData.currentDisorders" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.current_disorders" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Principais lazeres</label>
-                  <textarea v-model="sessionData.mainLeisureActivities" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.main_leisure_activities" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Vida social</label>
-                  <textarea v-model="sessionData.socialLife" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.social_life" rows="2" maxlength="500"></textarea>
                 </div>
               </div>
 
@@ -159,11 +159,11 @@
               <div class="session-info">
                 <div class="form-row">
                   <label>Observação geral</label>
-                  <textarea v-model="sessionData.generalObservation" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.general_observation" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Linguagem não verbal do paciente</label>
-                  <textarea v-model="sessionData.nonVerbalLanguage" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.non_verbal_language" rows="2" maxlength="500"></textarea>
                 </div>
               </div>
 
@@ -176,11 +176,11 @@
                 </div>
                 <div class="form-row">
                   <label>Encaminhamentos feitos</label>
-                  <textarea v-model="sessionData.referralsMade" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.referrals_made" rows="2" maxlength="500"></textarea>
                 </div>
                 <div class="form-row">
                   <label>Terapêutica utilizada (prescrição de exercícios, leituras, relacionamento, etc.)</label>
-                  <textarea v-model="sessionData.therapeuticsUsed" rows="2" maxlength="500"></textarea>
+                  <textarea v-model="sessionData.therapeutics_used" rows="2" maxlength="500"></textarea>
                 </div>
               </div>
 
@@ -245,15 +245,27 @@
           }
       }
       ,
-      async submitRecord() {
+      async fetchUserRecord () {
+        try {
+            const response = await axios.get(`/api/records/${this.selectedPatient}`)
+            console.log(response.data);
+            this.sessionData = response.data;
+        } catch (error) {
+            console.error('Erro ao recuperar dados de ficha do usuário:', error);
+        }
+      }
+      ,
+        async submitRecord() {
         try // REFAZER
         {
-        this.sessionData.email = '';
-        this.sessionData.name = this.selectedPatient;
-          const response = await axios.post('/api/records', this.sessionData);
-          console.log(response.value)
+          console.log(`/api/records/${this.selectedPatient}`);
+          console.log('dados:',this.sessionData);
+          const response = await axios.put(`/api/records/${this.selectedPatient}`, this.sessionData);
+          console.log(response.data);
+          this.setObservations();
+          alert('Ficha salva com sucesso');
         } catch (error) {
-          console.log(error);
+          console.log('Erro ao salvar a ficha da consulta:', error);
         }
       }
       ,
@@ -280,11 +292,29 @@
       } catch (error) {
         console.error('Erro ao recuperar as consultas:', error);
       }
-    },
-    showPatientRecord (patient, id) {
+    }
+    ,
+    async setObservations() {
+        try {
+            // console.log('profissional da consulta: ',this.sessionData.professional);
+            // console.log('referrals da consulta: ',this.sessionData.referrals_made);
+            // console.log('therapeutics da consulta: ',this.sessionData.therapeutics_used);
+            this.currAppointment.professional = this.sessionData.professional;
+            this.currAppointment.referrals_made = this.sessionData.referrals_made;
+            this.currAppointment.therapeutics_used = this.sessionData.therapeutics_used;
+            const response = await axios.put(`/api/appointments/update/${this.currAppointmentId}`, this.currAppointment);
+            console.log(response.data);
+        } catch (error) {
+            console.error('Erro ao configurar observações da consulta:', error);
+        }
+    }
+    ,
+    showPatientRecord (appointment,patient, id) {
+        this.currAppointment = appointment;
         this.selectedPatient = patient;
         this.currAppointmentId = id;
         this.fetchUserData();
+        this.fetchUserRecord();
       }
     },
 
@@ -305,137 +335,56 @@
     setup() {
       const professionalName = ref('Dr. João Silva');
       const currUserData = ref([]);
+      const currAppointment = ref();
       const currAppointmentId = ref('');
       const isSidebarHidden = ref(false);
       const selectedSection = ref('Pacientes');
       const notifications = ref([]);
-      const sessionData = ref({
-      profession: '',
-      maritalStatus: '',
-      spouseName: '',
-      spouseAge: '',
-      spouseProfession: '',
-      spouseEducation: '',
-      mainComplaint: '',
-      previousTherapy: '',
-      patientExpectations: '',
-      presentedSymptoms: '',
-      physicalDiseases: '',
-      psychosocialStressors: '',
-      globalFunctioning: '',
-      psychologicalConceptualization: '',
-      previousPsychiatricDisorders: '',
-      familyPsychiatricDisorders: '',
-      significantDiseases: '',
-      currentMedication: '',
-      alternativeMedication: '',
-      testApplication: '',
-      complaintStart: '',
-      traumaticEvents: '',
-      crisisFactors: '',
-      drugUse: '',
-      suicideAttempt: '',
-      therapeuticFocus: '',
-      pregnancy: '',
-      childbirth: '',
-      breastfeeding: '',
-      hygieneTraining: '',
-      childhoodStressors: '',
-      childhoodDisorders: '',
-      otherComments: '',
-      affectionateExperiences: '',
-      sexualExperiences: '',
-      firstJobs: '',
-      friendshipCircles: '',
-      partnerRelationships: '',
-      currentSexLife: '',
-      financialSituation: '',
-      abortions: '',
-      socialSupport: '',
-      currentDisorders: '',
-      mainLeisureActivities: '',
-      socialLife: '',
-      generalObservation: '',
-      nonVerbalLanguage: '',
-      professional: '',
-      referralsMade: '',
-      therapeuticsUsed: ''
-    });
+      const sessionData = ref({});
 
       const sessionFields = ref([
         { key: 'profession', label: 'Profissão' },
-        { key: 'maritalStatus', label: 'Est. Civil' },
-        { key: 'spouseName', label: 'Cônjuge (nome)' },
-        { key: 'spouseAge', label: 'Cônjuge (idade)' },
-        { key: 'spouseProfession', label: 'Cônjuge (profissão)' },
-        { key: 'spouseEducation', label: 'Cônjuge (escolaridade)' },
-        { key: 'mainComplaint', label: 'Queixa principal' },
-        { key: 'previousTherapy', label: 'Fez terapia anteriormente? (citar qual e quando)' },
-        { key: 'patientExpectations', label: 'Expectativas e objetivos do paciente' },
-        { key: 'presentedSymptoms', label: 'Sintomas apresentados' },
-        { key: 'physicalDiseases', label: 'Doenças físicas' },
-        { key: 'psychosocialStressors', label: 'Estressores psicossociais' },
-        { key: 'globalFunctioning', label: 'Funcionamento global' },
-        { key: 'psychologicalConceptualization', label: 'Conceituação Psicológica do caso' },
-        { key: 'previousPsychiatricDisorders', label: 'Transtornos psiquiátricos anteriores' },
-        { key: 'familyPsychiatricDisorders', label: 'Transtornos psiquiátricos familiares' },
-        { key: 'significantDiseases', label: 'Doenças importantes que teve' },
-        { key: 'currentMedication', label: 'Medicação que está tomando' },
-        { key: 'alternativeMedication', label: 'Medicação alternativa (chás, composto, etc)' },
-        { key: 'testApplication', label: 'Aplicação de testes? se sim quando e resultado' },
+        { key: 'marital_status', label: 'Est. Civil' },
+        { key: 'spouse_name', label: 'Cônjuge (nome)' },
+        { key: 'spouse_age', label: 'Cônjuge (idade)' },
+        { key: 'spouse_profession', label: 'Cônjuge (profissão)' },
+        { key: 'spouse_education', label: 'Cônjuge (escolaridade)' },
+        { key: 'main_complaint', label: 'Queixa principal' },
+        { key: 'previous_therapy', label: 'Fez terapia anteriormente? (citar qual e quando)' },
+        { key: 'patient_expectations', label: 'Expectativas e objetivos do paciente' },
+        { key: 'presented_symptoms', label: 'Sintomas apresentados' },
+        { key: 'physical_diseases', label: 'Doenças físicas' },
+        { key: 'psychosocial_stressors', label: 'Estressores psicossociais' },
+        { key: 'global_functioning', label: 'Funcionamento global' },
+        { key: 'psychological_conceptualization', label: 'Conceituação Psicológica do caso' },
+        { key: 'previous_psychiatric_disorders', label: 'Transtornos psiquiátricos anteriores' },
+        { key: 'family_psychiatric_disorders', label: 'Transtornos psiquiátricos familiares' },
+        { key: 'significant_diseases', label: 'Doenças importantes que teve' },
+        { key: 'current_medication', label: 'Medicação que está tomando' },
+        { key: 'alternative_medication', label: 'Medicação alternativa (chás, composto, etc)' },
+        { key: 'test_application', label: 'Aplicação de testes? se sim quando e resultado' },
       ]);
 
       const complaintHistoryFields = ref([
-        { key: 'complaintStart', label: 'Quando se iniciou' },
-        { key: 'traumaticEvents', label: 'Eventos traumáticos de vida' },
-        { key: 'crisisFactors', label: 'Eventos/fatores que precipitam ou agravam crises' },
-        { key: 'drugUse', label: 'Uso de drogas?' },
-        { key: 'suicideAttempt', label: 'Tentativa de suicídio?' },
-        { key: 'therapeuticFocus', label: 'Focos de intervenção psicoterápica' },
+        { key: 'complaint_start', label: 'Quando se iniciou' },
+        { key: 'traumatic_events', label: 'Eventos traumáticos de vida' },
+        { key: 'crisis_factors', label: 'Eventos/fatores que precipitam ou agravam crises' },
+        { key: 'drug_use', label: 'Uso de drogas?' },
+        { key: 'suicide_attempt', label: 'Tentativa de suicídio?' },
+        { key: 'therapeutic_focus', label: 'Focos de intervenção psicoterápica' },
       ]);
 
       const childhoodFields = ref([
         { key: 'pregnancy', label: 'Gravidez (planejada ou não)' },
         { key: 'childbirth', label: 'Parto, intercorrências obstétricas' },
         { key: 'breastfeeding', label: 'Amamentação' },
-        { key: 'hygieneTraining', label: 'Treinamento de Higiene' },
-        { key: 'childhoodStressors', label: 'Estressores na infância, crises' },
-        { key: 'childhoodDisorders', label: 'Outros transtornos infantis (sono, alimentação, psicomotor, gagueira, tiques, sonambulismo, aprendizagem)' },
-        { key: 'otherComments', label: 'Outros comentários' }
+        { key: 'hygiene_training', label: 'Treinamento de Higiene' },
+        { key: 'childhood_stressors', label: 'Estressores na infância, crises' },
+        { key: 'childhood_disorders', label: 'Outros transtornos infantis (sono, alimentação, psicomotor, gagueira, tiques, sonambulismo, aprendizagem)' },
+        { key: 'other_comments', label: 'Outros comentários' }
       ]);
 
-      const patients = ref([
-        {
-          id: 1, name: 'Ana Silva', email: 'ana@example.com', cpf: '123.456.789-00', phone: '123456789', birthdate: '01/01/1980',
-          cep: '12345-678', street: 'Rua A, 123', complement: 'Apto 1', neighborhood: 'Bairro A', city: 'Cidade A', state: 'Estado A',
-          appointmentTime: '09:00', initial: 'A'
-        },
-        {
-          id: 2, name: 'Bruno Souza', email: 'bruno@example.com', cpf: '987.654.321-00', phone: '987654321', birthdate: '02/02/1985',
-          cep: '87654-321', street: 'Rua B, 456', complement: 'Casa 2', neighborhood: 'Bairro B', city: 'Cidade B', state: 'Estado B',
-          appointmentTime: '10:30', initial: 'B'
-        },
-        {
-          id: 3, name: 'Carla Pereira', email: 'carla@example.com', cpf: '456.123.789-00', phone: '456123789', birthdate: '03/03/1990',
-          cep: '56789-123', street: 'Rua C, 789', complement: 'Apto 3', neighborhood: 'Bairro C', city: 'Cidade C', state: 'Estado C',
-          appointmentTime: '11:00', initial: 'C'
-        },
-        {
-          id: 4, name: 'Daniela Almeida', email: 'daniela@example.com', cpf: '321.654.987-00', phone: '321654987', birthdate: '04/04/1995',
-          cep: '43210-987', street: 'Rua D, 101', complement: 'Casa 4', neighborhood: 'Bairro D', city: 'Cidade D', state: 'Estado D',
-          appointmentTime: '13:30', initial: 'D'
-        },
-        {
-          id: 5, name: 'Eduardo Santos', email: 'eduardo@example.com', cpf: '654.987.321-00', phone: '654987321', birthdate: '05/05/1980',
-          cep: '21098-765', street: 'Rua E, 202', complement: 'Apto 5', neighborhood: 'Bairro E', city: 'Cidade E', state: 'Estado E',
-          appointmentTime: '15:00', initial: 'E'
-        },
-        {
-          id: 6, name: 'Fernanda Lima', email: 'fernanda@example.com', cpf: '789.321.654-00', phone: '789321654', birthdate: '06/06/1995',
-          cep: '10987-654', street: 'Rua F, 303', complement: 'Casa 6', neighborhood: 'Bairro F', city: 'Cidade F', state: 'Estado F',
-          appointmentTime: '16:30', initial: 'F'
-        }
-      ]);
+      const patients = ref([]);
 
       const selectedPatient = ref(null);
 
@@ -470,7 +419,8 @@
         complaintHistoryFields,
         childhoodFields,
         currUserData,
-        notifications
+        notifications,
+        currAppointment
       };
     }
   }

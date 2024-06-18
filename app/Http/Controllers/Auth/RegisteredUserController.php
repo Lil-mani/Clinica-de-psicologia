@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+use App\Models\PatientRecord;
 use Validator;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -128,6 +129,11 @@ class RegisteredUserController extends Controller
             'localidade' => $request->localidade,
             'uf' => $request->uf,
             'role' => $request->role,
+        ]);
+
+        $records = PatientRecord::create([
+            'name' => $request->name,
+            'email'=> $request->email
         ]);
 
         event(new Registered($user));

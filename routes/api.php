@@ -24,6 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // rota para guardar info de contato
 Route::post('/contacts', [ContactController::class, 'store']);
+Route::post('/contacts/{id}', [ContactController::class,'destroy']);
 Route::get('/contacts', [ContactController::class, 'index']);
 
 Route::post('/appointments', [AppointmentController::class,'store']);
@@ -34,11 +35,15 @@ Route::get('/userpastappointments/{id}', [AppointmentController::class,'show_pas
 Route::get('/appointments/today', [AppointmentController::class,'show_today_appointments']);
 Route::get('/appointments/today/{id}', [AppointmentController::class,'show_today_appointments_psychologist']);
 Route::post('/appointments/update/{id}', [AppointmentController::class,'update']);
+Route::put('/appointments/update/{id}',[AppointmentController::class,'setObservation']);
 
 Route::get('/usuarios/nome/{id}', [RegisteredUserController::class,'showName']);
 Route::get('/usuarios/{id}', [RegisteredUserController::class,'showUserInfo']);
 Route::get('/usuarios', [RegisteredUserController::class,'show']);
+
 Route::post('/records',[PatientRecordController::class,'store']);
+Route::put('/records/{id}',[PatientRecordController::class,'update']);
+Route::get('/records/{id}',[PatientRecordController::class,'show']);
 
 // Rotas de notificação; Usadas nas telas de Psicologo & Secretaria
 Route::post('/notify/{id}', [NotificationController::class,'notify']);

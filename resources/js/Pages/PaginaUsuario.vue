@@ -32,7 +32,7 @@
               <tr v-for="historico in consultasPassadas" :key="historico.id">
                 <td>{{ historico.medic }}</td>
                 <td>{{ historico.time }}</td>
-                <td><button @click="viewNotes(historico.observations)">Ver Anotações</button></td>
+                <td><button @click="viewNotes(historico)">Ver Anotações</button></td>
               </tr>
             </tbody>
           </table>
@@ -42,6 +42,18 @@
             <button @click="nextHistoricoPage" :disabled="historicoPage === totalHistoricoPages">Próxima</button>
           </div>
         </div>
+
+        <!-- Modal -->
+        <div v-if="showModal" class="modal">
+        <div class="modal-content">
+            <span class="close" @click="closeModal()">&times;</span>
+            <h2>Informações da Sessão</h2>
+            <p><strong>Profissional:</strong> {{ currObservations.professional }}</p>
+            <p><strong>Encaminhamentos:</strong> {{ currObservations.referrals_made }}</p>
+            <p><strong>Terapêuticas Utilizadas:</strong> {{ currObservations.therapeutics_used }}</p>
+        </div>
+        </div>
+
 
         <div v-if="currentSection === 'novo-agendamento'" class="section">
           <h2>Novo Agendamento</h2>
@@ -191,8 +203,10 @@
       const currentSection = ref('historico');
       const horarios = ref(['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']);
       const searchQuery = ref('');
+      const currObservations = ref('');
       const currentPage = ref(1);
       const historicoPage = ref(1);
+      const showModal = ref(false);
       const itemsPerPage = 5;
       const historicoItemsPerPage = 5;
 
@@ -302,7 +316,12 @@
       };
 
       const viewNotes = (notes) => {
-        alert(notes);
+        currObservations.value = notes;
+        showModal.value = true;
+      };
+
+      const closeModal = () => {
+        showModal.value = false;
       };
 
       const verificarData = () => {
@@ -429,6 +448,9 @@
         hidePopup,
         viewNotes,
         horarios,
+        currObservations,
+        closeModal,
+        showModal
       };
     },
   };
@@ -751,4 +773,30 @@
   .historico-table td button:hover {
     color: #0056b3;
   }
+
+  .modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 50%;
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+  font-size: 28px;
+}
+
   </style>

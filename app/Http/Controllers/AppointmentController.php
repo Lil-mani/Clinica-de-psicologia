@@ -68,6 +68,15 @@ class AppointmentController extends Controller
             $name = Userdata::where('id', $appointment->medic)->value('name');
             $appointment->medic = $name;
         }
+        if (is_null($appointment->therapeutics_used)) {
+            $appointment->therapeutics_used = 'Nenhuma anotação disponível';
+        }
+        if (is_null($appointment->professional)) {
+            $appointment->professional = 'Nenhuma anotação disponível';
+        }
+        if (is_null($appointment->referrals_made)) {
+            $appointment->referrals_made = 'Nenhuma anotação disponível';
+        }
         return $appointment;
         });
         return response()->json($appointments);
@@ -113,11 +122,34 @@ class AppointmentController extends Controller
         }
     }
 
-    public function setObservation($id,$observation) { // nao sei se esta funcionando 100%
+    public function setObservation(Request $request, $id) { // nao sei se esta funcionando 100%
         try {
-            $appointment = Appointment::findOrFail($id);
-            $appointment->observations = $observation;
-            $appointment->save();
+            $validated = $request->validate([
+                'id' => 'required',
+                'patient' => 'required|integer',
+                'medic' => 'required|integer',
+                'time' => 'required|date',
+                'professional' => 'nullable',
+                'referrals_made' => 'nullable',
+                'therapeutics_used' => 'nullable',
+                'done' => 'required',
+            ]);
+
+            // $appointment = Appointment::findOrFail($id);
+            // $validated->save();
+            $appointment = Appointment::updateOrCreate(
+                [
+                    'patient' => $validated['patient'],
+                    'medic' => $validated['medic'],
+                    'time' => $validated['time']
+                ],
+                [
+                    'professional' => $validated['professional'],
+                    'referrals_made' => $validated['referrals_made'],
+                    'therapeutics_used' => $validated['therapeutics_used'],
+                    'done' => $validated['done'],
+                ]
+            );
             return response()->json(['message'=> 'Consulta atualizada.'],200);
         } catch (ModelNotFoundException $e) {
             return response()->json(['message'=> 'Consulta não encontrada'],404);

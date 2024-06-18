@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Userdata;
 use App\Models\Appointment;
 use Illuminate\Support\Facades\Hash;
+use App\Models\PatientRecord;
 
 class UsersTableSeeder extends Seeder
 {
@@ -20,6 +21,8 @@ class UsersTableSeeder extends Seeder
         // Limpar a tabela de usuários
         User::truncate();
         Userdata::truncate();
+        Appointment::truncate();
+        PatientRecord::truncate();
         // Criar usuários de exemplo
         User::create([
             'name' => 'Secretaria',
@@ -41,6 +44,12 @@ class UsersTableSeeder extends Seeder
             'uf' => 'SP',
             'role' => 'secretaria'
         ]);
+
+        PatientRecord::create([
+            'name' => 'Secretaria',
+            'email' => 'secretaria@email.com'
+        ]);
+
         User::create([
             'name' => 'Usuario',
             'email' => 'usuario@email.com',
@@ -61,6 +70,12 @@ class UsersTableSeeder extends Seeder
             'uf' => 'SP',
             'role' => 'usuario'
         ]);
+
+        PatientRecord::create([
+            'name' => 'Usuario',
+            'email' => 'usuario@email.com'
+        ]);
+
         User::create([
             'name' => 'Psicologo',
             'email' => 'psicologo@email.com',
@@ -81,6 +96,12 @@ class UsersTableSeeder extends Seeder
             'uf' => 'SP',
             'role' => 'psicologo'
         ]);
+
+        PatientRecord::create([
+            'name' => 'Psicologo',
+            'email' => 'psicologo@email.com',
+        ]);
+
         User::create([
             'name' => 'Admin',
             'email' => 'admin@email.com',
@@ -101,11 +122,25 @@ class UsersTableSeeder extends Seeder
             'uf' => 'SP',
             'role' => 'admin'
         ]);
+
+        PatientRecord::create([
+            'name' => 'admin',
+            'email' => 'admin@email.com',
+        ]);
+
         Appointment::create([
             'patient' => 2,
             'medic' => 3,
             'time' => '2024-06-01 10:00',
-            'observations' => 'Paciente vem evoluindo muito bem',
+            'professional' => 'Paciente vem evoluindo muito bem',
+            'referrals_made' => '',
+            'therapeutics_used' => '',
+            'done' => 1
+        ]);
+        Appointment::create([
+            'patient' => 2,
+            'medic' => 3,
+            'time' => '2024-06-04 10:00',
             'done' => 1
         ]);
 
