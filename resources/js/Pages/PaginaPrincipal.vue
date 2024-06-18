@@ -147,6 +147,7 @@ export default {
   },
   methods: {
     submitForm() {
+      this.sendMail();
       axios.post('/api/contacts', this.formData)
         .then(response => {
           alert('Mensagem enviada com sucesso!');
@@ -159,6 +160,13 @@ export default {
         });
 
     },
+    async sendMail() {
+        try {
+            const response = axios.put('/api/mail', this.formData);
+        } catch (error) {
+            console.error('Erro ao mandar email:',error);
+        }
+    }
   }
 }
 </script>

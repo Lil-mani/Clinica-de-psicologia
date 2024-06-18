@@ -6,6 +6,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\PatientRecordController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\mailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,4 +54,4 @@ Route::post('/notifications/{id}', [NotificationController::class,'markRead']);
 // rota utilizada para coletar a lista de psicologos atualmente cadastrada no banco de dados
 Route::get('/psychologists', [RegisteredUserController::class, 'getPsicologos']);
 
-
+Route::put('/mail', [mailController::class, 'sendEmail']);

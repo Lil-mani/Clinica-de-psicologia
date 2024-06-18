@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Psi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            background-color: #ffffff;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #474a59;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .header img {
+            max-width: 100px;
+            margin-bottom: 10px;
+        }
+        .content {
+            padding: 20px;
+            color: #474a59;
+            text-align: left;
+        }
+        .content h1 {
+            color: #474a59;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .content p {
+            color: #474a59;
+            line-height: 1.6;
+        }
+        .highlight {
+            color: #89ffdb;
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .button {
+            background-color: #89ffdb;
+            color: #474a59;
+            padding: 15px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #78e6c8;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>Bem-vindo ao Instituto <span class="highlight">Psi</span></h1>
+        </div>
+        <div class="content">
+            <h1>Olá, {{$name}}!</h1>
+            <p>Agradecemos seu interesse em nossa instituição. Estamos felizes em tê-lo(a) conosco. Para concluir seu cadastro, por favor clique no botão abaixo:</p>
+            <div class="button-container">
+                <a href="https://forms.gle/wUPauKyYR7h4fb1M9" class="button">Finalizar Cadastro</a>
+            </div>
+            <p>Se você tiver qualquer dúvida, não hesite em nos contatar. Estamos aqui para ajudar!</p>
+            <p>Atenciosamente,<br>Equipe <span class="highlight">Psi</span></p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Psi. Todos os direitos reservados.</p>
+            <p>Para mais informações, visite nosso site ou entre em contato conosco.</p>
+        </div>
+    </div>
+</body>
+</html>
