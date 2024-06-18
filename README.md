@@ -88,31 +88,31 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
 function createWindow() {
-    const win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-        }
-    });
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
 
-    win.loadURL('http://localhost:8080');
+  mainWindow.loadURL('http://localhost:8080'); // URL do seu servidor Laravel
 }
 
-app.whenReady().then(() => {
-    createWindow();
-
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow();
-        }
-    });
-});
+app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
 });
 ```
 
@@ -127,47 +127,15 @@ Crie o arquivo `preload.js` (comentado para futura utilização):
 
 Atualize o `package.json` com o script de inicialização do Electron:
 ```json
-{
-  "name": "electron-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "electron": "^12.0.0"
-  }
-}
+// preload.js
+
+// Esse arquivo pode ficar vazio ou ser usado para expor funcionalidades ao renderer process
 ```
 
 ### Inicialização do Electron
 
 Para iniciar o Electron, execute:
 ```sh
-npm run start
-```
-
-### Inicialização do Projeto
-
-Para iniciar o container Docker e o Laravel:
-```sh
-docker compose up -d
-docker compose exec app bash
-composer install
-php artisan key:generate
-php artisan migrate
-php artisan db:seed
-exit
-npm install
-npm run dev
-```
-
-Para iniciar o Electron:
-```sh
-cd electron
 npm run start
 ```
 
